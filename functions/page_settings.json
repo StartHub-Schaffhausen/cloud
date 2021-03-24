@@ -1,0 +1,629 @@
+{
+    "companytable": {
+        "uid": "UID / UID-Register",
+        "excerptPdf": "PDF",
+        "location": "Sitz",
+        "excerpt": "Kt. Auszug",
+        "name": "Firma",
+        "mutationType": "Mutationstyp ",
+        "mutationTypeShab": "Mutationstyp (nur SHAB)",
+        "canton": "Kanton / HRA",
+        "chid": "CH-ID",
+        "linkHtml": "Auszug (Web)",
+        "legalForm": "Rechtsform",
+        "linkPdf": "Auszug (PDF)"
+    },
+    "about": {
+        "p3": "Die über die Internetdatenbank Zefix elektronisch abgerufenen Daten entfalten keine Rechtswirkungen. Verbindlich sind einzig der vom zuständigen Handelsregisteramt ausgestellte, beglaubigte Registerauszug und der Publikationstext im Schweizerischen Handelsamtsblatt (SHAB).",
+        "p2": "Die öffentlichen Daten des Zentralregisters werden in einem elektronischen Abrufverfahren über die Internetdatenbank Zefix für Einzelabfragen unentgeltlich zugänglich gemacht.",
+        "p1": "Das Eidgenössische Amt für das Handelsregister (EHRA) führt ein Zentralregister sämtlicher Rechtseinheiten, die in den Hauptregistern der kantonalen Handelsregister eingetragen sind. Das Zentralregister dient der Unterscheidung und dem Auffinden der einge"
+    },
+    "searchform": {
+        "formerNames": {
+            "label": "in bisherigen Firmen/Namen suchen"
+        },
+        "registryOffices": {
+            "placeholder": "bitte wählen",
+            "label": "Kanton",
+            "all": "(keine Einschränkung)"
+        },
+        "publicationNumber": {
+            "placeholder": "Publikationsnummer",
+            "label": "Publikationsnummer"
+        },
+        "publicationDateEnd": {
+            "placeholder": "Publikationsdatum bis",
+            "label": "Publikationsdatum bis"
+        },
+        "mutationTypes": {
+            "label": "Mutationstyp",
+            "all": "(keine Einschränkung)",
+            "options": {
+                "kapitalaenderung-nominell": {
+                    "full": "Änderung nominelles Kapital",
+                    "abbr": "KN"
+                },
+                "zweckaenderung": {
+                    "full": "Änderung Zweck",
+                    "abbr": "ZW"
+                },
+                "rechtsformaenderung": {
+                    "full": "Änderung Rechtsform",
+                    "abbr": "RA"
+                },
+                "status-wiederrufliq": {
+                    "full": "Widerruf von Auflösung",
+                    "abbr": "WL"
+                },
+                "status": {
+                    "full": "Statusänderung (alle)",
+                    "abbr": "St"
+                },
+                "aenderungorgane": {
+                    "full": "Änderung Organe / Vertretung",
+                    "abbr": "OV"
+                },
+                "kapitalaenderung-libriert": {
+                    "full": "Änderung libriertes Kapital",
+                    "abbr": "KL"
+                },
+                "kapitalaenderung": {
+                    "full": "Kapitaländerung (alle)",
+                    "abbr": "KA"
+                },
+                "adressaenderung": {
+                    "full": "Adressänderung",
+                    "abbr": "SV"
+                },
+                "status-aufl-konk": {
+                    "full": "Auflösung inf. Konkurs",
+                    "abbr": "KE"
+                },
+                "status-neu": {
+                    "full": "Neueintrag",
+                    "abbr": "NE"
+                },
+                "status-loeschung": {
+                    "full": "Löschung",
+                    "abbr": "LO "
+                },
+                "status-aufl-liq": {
+                    "full": "Auflösung inf. Liquidation",
+                    "abbr": "AL"
+                },
+                "status-aufl": {
+                    "full": "Auflösung (alle)",
+                    "abbr": "AL"
+                },
+                "kapitalaenderung-stueckelung": {
+                    "full": "Änderung Kapitalstückelung",
+                    "abbr": "KS"
+                },
+                "status-wiedereintrag": {
+                    "full": "Wiedereintragung",
+                    "abbr": "WE"
+                },
+                "firmenaenderung": {
+                    "full": "Änderung Firma (Name)",
+                    "abbr": "FI"
+                }
+            }
+        },
+        "name": {
+            "placeholder": "Firmenname oder UID",
+            "label": "Firmenname oder UID"
+        },
+        "legalSeats": {
+            "placeholder": "bitte wählen",
+            "label": "Sitz",
+            "all": "(keine Einschränkung)"
+        },
+        "legalForms": {
+            "placeholder": "bitte wählen",
+            "label": "Rechtsform",
+            "all": "(keine Einschränkung)"
+        },
+        "deletedFirms": {
+            "label": "gelöschte Rechtseinheiten suchen"
+        },
+        "searchType": {
+            "label": "exakte Suche",
+            "tooltip": "Angekreuzt: Beginnt exakt mit den angegebenen Suchbegriffen. Nicht angekreuzt: Suchbegriffe kommen irgendwo als Einzelbegriffe in der Bezeichnung vor. Um alle Bezeichnungen zu suchen, welche eine Zeichenfolge beinhalten, kann * als Platzhalter verwendet w"
+        },
+        "phoneticSearchEnabled": {
+            "label": "phonetische Suche",
+            "tooltip": "Phonetische Suche zur Suche nach ähnlich klingenden Wörtern."
+        },
+        "publicationDate": {
+            "placeholder": "Publikationsdatum ab",
+            "label": "Publikationsdatum ab"
+        }
+    },
+    "contact": {
+        "title": "Kontakt",
+        "phone": {
+            "title": "Telefon"
+        },
+        "email": {
+            "title": "E-Mail"
+        },
+        "address": {
+            "line1": "Bundesamt für Justiz (BJ)",
+            "line2": "Eidgenössisches Amt für das Handelsregister (EHRA)",
+            "city": "Bern"
+        },
+        "openinghours": {
+            "title": "Öffnungszeiten",
+            "mo_fr": "Montag bis Freitag"
+        }
+    },
+    "loadingindicator": {
+        "searchingShab": "Je nach gewählten Suchkriterien, kann die Suche mehrere Minuten dauern. Schränken sie gegebenenfalls die Suche weiter ein."
+    },
+    "API": {
+        "UNHANDLED_EXEPTION": {
+            "title": "Interner Serverfehler.",
+            "suggestion": "Bitte versuchen Sie es später erneut."
+        },
+        "SEARCH": {
+            "TITLE": {
+                "NEEDDATEORNUMBER": "Geben Sie mindestens einen Datumsbereich oder eine Publikations-Nummer an.",
+                "INVALIDFILTER": "Ungültige Suchanfrage.",
+                "NEEDMORELETTERS": "Für die Suche wird ein Suchbegriff mit mindestens 2 Zeichen benötigt oder es müssen 2 zusätzliche Suchkriterien gewählt werden.",
+                "RESULTLIST_TOO_LARGE": "Ihre Suche liefert zuviele Resultate.",
+                "NORESULT": "Keine Suchresultate."
+            }
+        },
+        "BAD_REQUEST": {
+            "title": "Ungültige Anfrage."
+        },
+        "HINT": {
+            "TRYLATER": "Versuchen Sie es später erneut.",
+            "SEARCH": {
+                "SUGGESTION": {
+                    "CHANGEFILTER": "Versuchen Sie es mit anderen Filtereinstellungen."
+                }
+            },
+            "PAGE": {
+                "HOME": "Benutzen Sie das Formular auf der Startseite, um eine Firma zu suchen.",
+                "RELOAD": "Versuchen Sie die Seite neu zu laden oder ändern Sie die Suchparameter."
+            },
+            "CHANGE_PARAMS": "Versuchen Sie es erneut mit anderen Suchparametern."
+        },
+        "ERROR": {
+            "COMPANY": {
+                "NOTFOUND": "Die Firma konnte nicht gefunden werden."
+            },
+            "GENERAL": "Allgemeiner Server Fehler."
+        }
+    },
+    "another": {
+        "disclaimer": "Die über die Internetdatenbank Zefix elektronisch abgerufenen Daten entfalten keine Rechtswirkung. Eine verbindliche Auskunft, ob eine Eintragung mit einer bestimmten Bezeichnung existiert, erhalten Sie über <a href=\"https://www.regix.ch\">REGIX</a>."
+    },
+    "localitytable": {
+        "name": "Ortschaft",
+        "community": "Politische Gemeinde",
+        "canton": "Kanton",
+        "hra": "Handelsregisteramt"
+    },
+    "layout": {
+        "settings": "Einstellungen",
+        "layout": "Layout",
+        "twoCol": "zweispaltiges Layout",
+        "fullWidth": "volle Breite",
+        "visibleColumns": "Sichtbare Spalten"
+    },
+    "pikaday": {
+        "months": {
+            "3": "April",
+            "2": "März",
+            "10": "November",
+            "1": "Februar",
+            "0": "Januar",
+            "7": "August",
+            "6": "Juli",
+            "5": "Juni",
+            "4": "Mai",
+            "9": "Oktober",
+            "8": "September",
+            "11": "Dezember"
+        },
+        "previousMonth": "Vorheriger Monat",
+        "nextMonth": "Nächster Monat",
+        "weekdaysShort": {
+            "3": "Mi",
+            "2": "Di",
+            "1": "Mo",
+            "0": "So",
+            "6": "Sa",
+            "5": "Fr",
+            "4": "Do"
+        },
+        "weekdays": {
+            "3": "Mittwoch",
+            "2": "Dienstag",
+            "1": "Montag",
+            "0": "Sonntag",
+            "6": "Samstag",
+            "5": "Freitag",
+            "4": "Donnerstag"
+        }
+    },
+    "welcome": {
+        "firmStartup": {
+            "title": "Firmengründung",
+            "text": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+            "link": "Informationen zur Firmengründung"
+        },
+        "howDoesZefixWork": {
+            "title": "Wie funktioniert Zefix?",
+            "text": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+            "link": "Zefix Bedienungsanleitung"
+        },
+        "heading": "Herzlich willkommen",
+        "firmSearch": {
+            "title": "Firmenrecherche",
+            "text": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+            "link": "Regix Firmenrecherche"
+        }
+    },
+    "cantons": {
+        "TG": "Thurgau",
+        "UR": "Uri",
+        "AR": "Appenzell Ausserrhoden",
+        "GE": "Genf",
+        "LU": "Luzern",
+        "VS": "Wallis",
+        "SH": "Schaffhausen",
+        "BS": "Basel-Stadt",
+        "SG": "St. Gallen",
+        "OW": "Obwalden",
+        "TI": "Tessin",
+        "NW": "Nidwalden",
+        "ZG": "Zug",
+        "ZH": "Zürich",
+        "SO": "Solothurn",
+        "JU": "Jura",
+        "VD": "Waadt",
+        "FR": "Freiburg",
+        "AG": "Aargau",
+        "GR": "Graubünden",
+        "SZ": "Schwyz",
+        "BE": "Bern",
+        "AI": "Appenzell Innerrhoden",
+        "GL": "Glarus",
+        "BL": "Basel-Landschaft",
+        "NE": "Neuenburg"
+    },
+    "links": {
+        "uid": "zum UID-Register",
+        "kmu": {
+            "title": "KMU-Portal"
+        },
+        "legal": {
+            "title": "Rechtliche Grundlagen"
+        },
+        "rechtliches": {
+            "title": "Impressum"
+        },
+        "desc": "Hier finden Sie nützliche Links.",
+        "swissreg": {
+            "title": "Swissreg"
+        },
+        "zefixapp": {
+            "title": "Zefix Mobile App"
+        },
+        "abbr": {
+            "title": "Geschützte Abkürzungen"
+        },
+        "regix": {
+            "title": "Regix"
+        },
+        "hra": "zum zuständigen Handelsregisteramt",
+        "juspace": {
+            "title": "Juspace"
+        },
+        "bj": {
+            "title": "Bundesamt für Justiz (BJ)"
+        },
+        "ejpd": {
+            "title": "Eidgenössisches Justiz- und Polizeidepartement (EJPD)"
+        },
+        "praxis": {
+            "title": "Publikationen EHRA"
+        },
+        "uidreg": {
+            "title": "UID-Register"
+        },
+        "shab": {
+            "title": "SHAB"
+        },
+        "easygov": {
+            "title": "EasyGov"
+        },
+        "handelsregister": {
+            "title": "Handelsregister"
+        },
+        "hr-edit": {
+            "title": "EasyGov - Handelsregistereintrag ändern"
+        }
+    },
+    "general": {
+        "advancedSearch": "erweiterte Suche",
+        "stop": "Stopp",
+        "no": "nein",
+        "back": "Zurück",
+        "from": "vom",
+        "in": "in",
+        "until": "bis",
+        "close": "Schliessen",
+        "yes": "ja",
+        "languageSelection": "Sprachauswahl",
+        "not_available": "nicht vorhanden",
+        "more": "mehr",
+        "zefixTitle": "Zentraler Firmenindex",
+        "bj": "Bundesamt für Justiz (BJ)",
+        "search": "Suchen",
+        "ejpd": "Eidgenössisches Justiz- und Polizeidepartement (EJPD)",
+        "delete": "Löschen",
+        "reset": "Zurücksetzen",
+        "simpleSearch": "einfache Suche",
+        "less": "weniger"
+    },
+    "print": {
+        "list": {
+            "results": "Suchresultate",
+            "hitCount": "Anzahl Treffer",
+            "searchDate": "Zugriff am",
+            "parameters": "Suchparameter",
+            "date": "Zugriff am:",
+            "filter": "Filter"
+        }
+    },
+    "hra": {
+        "title": "Handelsregisterämter der Schweiz",
+        "desc": {
+            "p2": "Beglaubigte Handelsregisterauszüge sind direkt beim zuständigen Handelsregisteramt zu bestellen."
+        },
+        "localities": "Ortschaften & Gemeinden"
+    },
+    "navigation": {
+        "legal": "Rechtliches",
+        "law": "Rechtliche Grundlagen",
+        "home": "Startseite",
+        "searchShab": "SHAB-Suche",
+        "form": "Formular",
+        "newsletter": "Newsletter",
+        "terms": "Bestimmungen",
+        "about": "Über Zefix",
+        "links": "Links",
+        "regix": "Regix",
+        "contact": "Kontakt",
+        "howto": "Wie funktioniert Zefix",
+        "hra": "Handelsregisterämter",
+        "juspace": "Juspace",
+        "short": "Geschützte Abkürzungen",
+        "inform": "Informiert bleiben",
+        "help": "Hilfe",
+        "searchFirm": "Firmensuche",
+        "impressum": "Impressum",
+        "ejpd": "Bundesamt für Justiz (BJ)",
+        "rss": "RSS Feed",
+        "localities": "Ortschaften"
+    },
+    "notifications": {
+        "searchType": {
+            "loosenSearch": {
+                "title": "Suchtyp wurde gelockert.",
+                "suggestion": "Die exakte Suche ergab keine Treffer."
+            }
+        }
+    },
+    "pageTitle": {
+        "default": "Zentraler Firmenindex",
+        "search": {
+            "entity": "Zentraler Firmenindex - Firmensuche",
+            "shab": "Zentraler Firmenindex - SHAB Suche"
+        },
+        "about": "Über Zefix",
+        "welcome": "Willkommen",
+        "contact": "Kontakt",
+        "localities": "Ortschaften & Gemeinden",
+        "main": "Zentraler Firmenindex",
+        "hra": "Handelsregisterämter"
+    },
+    "firmDetails": {
+        "uid": "UID",
+        "noShabEntries": "Kein Eintrag vorhanden",
+        "disclaimer": "Die über die Internetdatenbank Zefix elektronisch abgerufenen Daten entfalten keine Rechtswirkungen. Verbindlich sind einzig der vom zuständigen Handelsregisteramt ausgestellte, beglaubigte Registerauszug und der Publikationstext im Schweizerischen Handelsamtsblatt (SHAB).",
+        "branchOffices": "Zweigniederlassungen",
+        "shabEntries": "Im Handelsregisterteil des SHAB publizierte Meldungen seit",
+        "purpose": "Zweck",
+        "legalForm": "Rechtsform",
+        "pdfLink": "PDF-Dokument",
+        "oldNames": "frühere Fassungen",
+        "pubAsPdf": "Publikation als PDF",
+        "auditFirms": "Revisionsstelle/n",
+        "addon": "Adresszusatz",
+        "poBox": "Postfach",
+        "dailyregister": "Tagesregister",
+        "firmEntry": "Handelsregistereintrag im zentralen Firmenindex",
+        "none": "keine",
+        "furtherMainOffices": "weitere Hauptsitze",
+        "hasTakenOver": "hat übernommen",
+        "ehraid": "EHRA-ID",
+        "mainOffices": "Hauptsitz",
+        "careOf": "c/o",
+        "auditFirmFor": "Revisionsstelle von",
+        "oldLegalSeats": "frühere Sitze",
+        "status": {
+            "GELOESCHT": "gelöscht",
+            "title": "Status",
+            "EXISTIEREND": "aktiv",
+            "IN_AUFLOESUNG": "in Auflösung"
+        },
+        "legalSeat": "Sitz",
+        "excerpt": "Kantonaler Auszug",
+        "noPurpose": "Kein Eintrag vorhanden",
+        "chid": "CH-ID",
+        "zipLocation": "PLZ / Ort",
+        "register": "Zuständiges Amt",
+        "address": "Adresse",
+        "takenOverBy": "übernommen durch",
+        "rabExcerpt": "Eintrag im Register der RAB"
+    },
+    "language": {
+        "de": "Deutsch",
+        "it": "Italienisch",
+        "fr": "Französisch",
+        "en": "Englisch"
+    },
+    "pagination": {
+        "total": "total",
+        "of": "von",
+        "hits": "Treffer",
+        "page": "Seite",
+        "resultPerPage": "Resultate pro Seite"
+    },
+    "loadingIndicator": {
+        "pleaseWait": "Bitte gedulden Sie sich einen Augenblick.",
+        "searching": "Datenbank wird durchsucht.",
+        "loading": "Daten werden geladen."
+    },
+    "yet": {
+        "another": {
+            "disclaimerishy": {
+                "thing": "Sind kantonale Handelsregisterauszüge nicht abrufbar, wenden Sie sich bitte an das entsprechende kantonale Handelsregisteramt."
+            }
+        }
+    },
+    "mobile": {
+        "page": {
+            "search_history": {
+                "title": "Suchverlauf"
+            },
+            "communities": {
+                "title": "Ortschaften & Gemeinden"
+            },
+            "shab_entry": {
+                "message": "Meldung",
+                "id": "SHAB-ID",
+                "title": "SHAB-Publikation vom {{shabDate}}",
+                "mutation_status": "Mutationsstatus",
+                "journal_date": "Tagesregisterdatum",
+                "journal_id": "Tagesregisternummer",
+                "date": "SHAB-Datum",
+                "mutation_types": "Mutationstypen"
+            },
+            "select": {
+                "legalseats": {
+                    "title": "Filter: Sitz"
+                },
+                "registryoffices": {
+                    "title": "Filter: Kanton"
+                },
+                "legalforms": {
+                    "title": "Filter: Rechtsform"
+                },
+                "mutationtypes": {
+                    "title": "Filter: Mutationstyp"
+                }
+            },
+            "settings": {
+                "config_date": "Konfigurationsdatei geladen am",
+                "title": "Einstellungen",
+                "clear_cache": "Lokale Daten löschen",
+                "translation_date": "Übersetzungen geladen am",
+                "language": "Sprache",
+                "reload_config": "Konfigurationsdatei neu laden"
+            },
+            "about": {
+                "legal": "Rechtliches",
+                "title": "Über Zefix mobile",
+                "dev": "Programmierung",
+                "privacy": "privacy policy",
+                "server": "Server",
+                "env": "Umgebung",
+                "homepage": "Homepage",
+                "version": "Version"
+            },
+            "hra": {
+                "title": "Handelsregisterämter",
+                "address": "Adresse"
+            },
+            "office_details": {
+                "canton_search": "Kantonale Suche",
+                "weblinks": "Weblinks",
+                "homepage": "Homepage"
+            },
+            "navigation": {
+                "title": "ZEFIX",
+                "subtitle": "Mobile App"
+            },
+            "search_result": {
+                "title": "Suchresultate",
+                "hits": "Treffer"
+            },
+            "firm_details": {
+                "title": "Details",
+                "external_links": "Externe Links",
+                "origin": "Eintrag im Kantonalen Register",
+                "uid_register": "UID-Register",
+                "shab_entries": "SHAB-Einträge"
+            },
+            "search_firm": {
+                "title": "Firmensuche",
+                "options": "Optionen"
+            },
+            "watch_list": {
+                "title": "Merkliste",
+                "last_viewed": "zuletzt angesehen",
+                "watch_list": "Merkliste",
+                "last_views": "letzte Aufrufe"
+            },
+            "locality_list": {
+                "title": "Ortschaften & Gemeinden"
+            },
+            "shab_entries": {
+                "id": "SHAB Pub. Nr.",
+                "title": "SHAB-Publikationen"
+            },
+            "search_shab": {
+                "title": "SHAB-Suche"
+            }
+        },
+        "component": {
+            "select": {
+                "legalseats": {
+                    "search_placeholder": "Suche nach Ortschaften"
+                },
+                "selected": "ausgewählte",
+                "all": "alle"
+            }
+        },
+        "nav": {
+            "action": {
+                "home": "Startseite",
+                "unpin": "von Merkliste entfernen",
+                "pin": "Firma merken",
+                "map": "Karte öffnen"
+            }
+        },
+        "action": {
+            "reset_filter": "Filter zurücksetzen"
+        },
+        "msg": {
+            "contacting_server": "Server wird kontaktiert...",
+            "no_results": {
+                "title": "Keine Resultate",
+                "subtitle": "Ihre Anfrage ergab keine Resultate. Versuchen Sie es mit anderen Parametern."
+            }
+        },
+        "modal": {
+            "clipboard": {
+                "title": "Zwischenablage",
+                "text": "Folgender Text wurde in die Zwischenablage kopiert:"
+            }
+        }
+    }
+}
