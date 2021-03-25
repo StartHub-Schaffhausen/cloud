@@ -129,7 +129,7 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
 
             }
 
-            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).get();
+            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('monthly', '==', true).get();
             partnerRef.forEach(async partner => {
 
                 let mail = await db.collection('mail').add({
@@ -189,7 +189,7 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
 
             }
 
-            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).get();
+            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('weekly', '==', true).get();
             partnerRef.forEach(async partner => {
 
                 let mail = await db.collection('mail').add({
