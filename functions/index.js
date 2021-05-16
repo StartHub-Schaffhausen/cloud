@@ -312,15 +312,58 @@ app.get('/startups/:type/:from/:to', (req, res) => {
     // registryOffices\":[440] = Thurgau
 
     /* LEGAL SEATS
+Gemeinden	LegalSeats
+Neuhausen am Rheinfall	1306
+Thayngen	1300
+Schaffhausen	1308
+Wilchingen	1319
+Hallau	1316
+Buchberg	1303
+Ramsen	1314
+Stein am Rhein"	1315
+Hemishofen	1313
+Trasadingen	1318
+Beringen	1302
+Löhningen	1288
+Stetten (SH)	1299
+Lohn (SH)	1297
+Büttenhard	1294
+Siblingen	1311
+Gächlingen	1286
+Merishausen	1305
+Bargen (SH)	1301
+Schleitheim	1310
+Beggingen	1309
+Neunkirch	1289
+Oberhallau	1317
+Bibern	1300
+Hofen	1300
+Opfertshofen	
+Altdorf	
+Dörflingen	1295
+	
+	
+Laufen-Uhwiesen	31
+Flurlingen	26
+Andelfingen	27
+Feuerthalen	24
+Dachsen	22
+Marthalen	32
+Trüllikon	37
+Benken (ZH)	19
+Stammheim	3050
+	
+Schlatt (TG)	1977
+Diessenhofen	2908
+Basadingen-Schlattingen	1974
+Eschenz	1835
 
-1308 - schaffhausen
-+ alle SH gemeinden
-
-+ Zürich Weinland
-
-+ Diesenhofen bis Stein am Rhein
 
 */
+
+
+
+
 
     fetch("https://www.zefix.ch/ZefixREST/api/v1/shab/search.json", {
             "headers": {
@@ -333,7 +376,8 @@ app.get('/startups/:type/:from/:to', (req, res) => {
             },
             "referrer": "https://www.zefix.ch/de/search/shab/welcome",
             "referrerPolicy": "no-referrer-when-downgrade",
-            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
+            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"legalSeats\":[1306,1300,1308,1319,1316,1303,1314,1315,1313,1318,1302,1288,1299,1297,1294,1311,1286,1305,1301,1310,1309,1289,1317,1300,1300,1295,31,26,27,24,22,32,37,19,3050,1977,2908,1974,1835],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
+//            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
             "method": "POST",
             "mode": "cors"
         }).then(res => res.json())
@@ -394,4 +438,4 @@ function convertHtml(list) {
 
 
 
-exports.api = functions.region("europe-west6").https.onRequest(app);
+exports.api = functions.region("europe-west6").https.onReq
