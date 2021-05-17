@@ -104,7 +104,10 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
         // calculate TimeStamps for request:
         const now = moment();
         let date = now.subtract(1, 'months'); // 7 months, 7 days and 7 seconds ago
-        let dateNow = new Date();
+
+        let dateNow = now.subtract(1 , 'days');
+        //let dateNow = new Date();
+
         fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
             "headers": {
                 "accept": "application/json, text/plain, */*",
@@ -162,8 +165,10 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
 
         // calculate TimeStamps for request:
         const now = moment();
-        let date = now.subtract(1, 'weeks'); // 7 months, 7 days and 7 seconds ago
-        let dateNow = new Date();
+        let date = now.subtract(7, 'days'); // 7 months, 7 days and 7 seconds ago
+
+        let dateNow = now.subtract(1, 'days');
+        //let dateNow = new Date();
 
         fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
             "headers": {
