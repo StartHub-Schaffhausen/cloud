@@ -147,14 +147,8 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
                     },
                 })
             });
-
-        
-
-
         }); //fetch Ende
-
     });
-
 
 
 /* EVERY MONDAY */
@@ -167,7 +161,8 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
         const now = moment();
         let date = now.subtract(7, 'days'); // 7 months, 7 days and 7 seconds ago
 
-        let dateNow = now.subtract(1, 'days');
+        const now2 = moment();
+        let dateNow = now2.subtract(1, 'days');
         //let dateNow = new Date();
 
         fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
@@ -209,10 +204,6 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
                     },
                 })
             });
-
-           
-
-
         }); //fetch Ende
     });
 
@@ -267,15 +258,9 @@ app.get('/testmail', async (req, res) => {
                     },
                 })
             });
-
             res.end();
-
-
         }); //fetch Ende
-
-
 });
-
 
 app.get('/startups/:type/:from/:to', (req, res) => {
 
@@ -366,10 +351,6 @@ Eschenz	1835
 
 */
 
-
-
-
-
     fetch("https://www.zefix.ch/ZefixREST/api/v1/shab/search.json", {
             "headers": {
                 "accept": "application/json, text/plain, */*",
@@ -440,7 +421,4 @@ function convertHtml(list) {
     return list;
 }
 
-
-
-
-exports.api = functions.region("europe-west6").https.onReq
+exports.api = functions.region("europe-west6").https.onRequest(app);
