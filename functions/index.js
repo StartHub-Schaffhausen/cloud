@@ -423,3 +423,24 @@ function convertHtml(list) {
 }
 
 exports.api = functions.region("europe-west6").https.onRequest(app);
+
+
+/*
+exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+    // ...
+  });
+  exports.sendByeEmail = functions.auth.user().onDelete((user) => {
+    // ...
+  });
+*/
+
+  exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
+
+    const email = user.email; // The email of the user.
+    //const displayName = user.displayName; // The display name of the user.
+    return db.collection('users').doc(user.uid).set({
+        email: email
+    })
+
+    // ...
+  });
