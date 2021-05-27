@@ -34,6 +34,8 @@ const axios = require('axios');
 const fetch = require('node-fetch');
 const apicache = require('apicache');
 
+const wordpress = require( "wordpress" );
+
 const app = express();
 
 const FormData = require('form-data');
@@ -43,6 +45,7 @@ const htmlToText = require('html-to-text');
 const nodemailer = require('nodemailer');
 
 const moment = require('moment');
+import localization from 'moment/locale/de';
 
 app.use(cors({
     origin: true
@@ -148,6 +151,9 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
                     },
                 })
             });
+
+            //this.createWordPressPage(json, date, dateNow);
+
         }); //fetch Ende
     });
 
@@ -205,6 +211,8 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
                     },
                 })
             });
+
+            createWordPressPage(json, date, dateNow);
         }); //fetch Ende
     });
 
@@ -411,16 +419,6 @@ app.get('/startup/:id', (req, res) => {
 });
 
 
-function convertHtml(list) {
-    for (let listEl in list) {
-        for (let pubEl in list[listEl].shabPub) {
-
-            list[listEl].shabPub[pubEl].message = htmlToText.fromString(list[listEl].shabPub[pubEl].message);
-            list[listEl].shabPub[pubEl].pdfLink = "https://www.shab.ch/shabforms/servlet/Search?EID=7&DOCID=" + list[listEl].shabPub[pubEl].shabId;
-        }
-    }
-    return list;
-}
 
 exports.api = functions.region("europe-west6").https.onRequest(app);
 
@@ -428,15 +426,15 @@ exports.api = functions.region("europe-west6").https.onRequest(app);
 /*
 exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
     // ...
-  });
+});
   exports.sendByeEmail = functions.auth.user().onDelete((user) => {
     // ...
-  });
+});
 */
 
   exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
 
-    const email = user.email; // The email of the user.
+      const email = user.email; // The email of the user.
 
     if ( email.search('@starthub.sh')){
         admin.auth().setCustomUserClaims(user.uid, {
@@ -445,7 +443,7 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
             isBock: false
         });
     }
-
+    
     if (email.search('@bockonline.ch')){
         admin.auth().setCustomUserClaims(user.uid,{
             admin: false,
@@ -459,16 +457,16 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
     return db.collection('users').doc(user.uid).set({
         email: email
     });
-
-
-
+    
+    
+    
     // ...
-  });
+});
 
 
   exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((user) => {
 
-    if (!user.emailVerified){
+      if (!user.emailVerified){
         admin
             .auth()
             .generateEmailVerificationLink(user.email, {})
@@ -488,6 +486,63 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
             .catch((error) => {
                 // Some error occurred.
             });
+        }
+        // ...
+          });
+
+          function convertHtml(list) {
+            for (let listEl in list) {
+                for (let pubEl in list[listEl].shabPub) {
+        
+                    list[listEl].shabPub[pubEl].message = htmlToText.fromString(list[listEl].shabPub[pubEl].message);
+                    list[listEl].shabPub[pubEl].pdfLink = "https://www.shab.ch/shabforms/servlet/Search?EID=7&DOCID=" + list[listEl].shabPub[pubEl].shabId;
+                }
+            }
+            return list;
+        }
+
+
+function createWordPressPage(json, date, dateNowe){
+    
+    let startupString = "";
+    for (let startup of json) {
+        //console.log(startup.name);
+        if (startup.address.careOf) {
+            startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
+        } else {
+            startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")"; 
+        }
+        // Add purpose
+        startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
+
     }
-    // ...
-  });
+
+
+    var client = wordpress.createClient({
+        url: "https://www.starthub.sh",
+        username: functions.config().wordpress.username,
+        password: functions.config().wordpress.password
+    });
+
+    client.newPost({
+        type: "page",
+        title: "Gründungen " + moment().locale('de').format('MMM YYYY'),
+        content: startupString,
+        status: "publish",
+        slug: "gruendungen-" + moment().locale('de').format('YYYY') + "-" + moment().locale('de').format('MM'),
+        parent: 1998
+
+        
+    }, function (error, data) {
+        console.log("Post sent! The server replied with the following:\n");
+        console.log(arguments);
+        console.log("\n");
+    });
+     
+    /*client.getPosts(function( error, posts ) {
+        for (let post of posts){
+            console.log(JSON.stringify(post));
+        }
+    });*/
+    
+};
