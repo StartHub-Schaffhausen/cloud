@@ -444,7 +444,6 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
             isStartHub: true,
             isBock: false
         });
-    
     }
 
     if (email.search('@bockonline.ch')){
@@ -463,5 +462,32 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 
 
 
+    // ...
+  });
+
+
+  exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((user) => {
+
+    if (!user.emailVerified){
+        admin
+            .auth()
+            .generateEmailVerificationLink(user.email, {})
+            .then( (link) => {
+                // Construct email verification template, embed the link and send
+                // using custom SMTP server.
+                return db.collection('mail').add({
+                    to: user.email,
+                    template: {
+                        name: 'userCreateSendWelcomeEmail',
+                        data: {
+                            link: link
+                        },
+                    },
+                })
+            })
+            .catch((error) => {
+                // Some error occurred.
+            });
+    }
     // ...
   });
