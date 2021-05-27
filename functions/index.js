@@ -437,10 +437,31 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
   exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
 
     const email = user.email; // The email of the user.
+
+    if ( email.search('@starthub.sh')){
+        admin.auth().setCustomUserClaims(user.uid, {
+            admin: true,
+            isStartHub: true,
+            isBock: false
+        });
+    
+    }
+
+    if (email.search('@bockonline.ch')){
+        admin.auth().setCustomUserClaims(user.uid,{
+            admin: false,
+            isStartHub: false,
+            isBock: true
+        })
+    }
+
+
     //const displayName = user.displayName; // The display name of the user.
     return db.collection('users').doc(user.uid).set({
         email: email
-    })
+    });
+
+
 
     // ...
   });
