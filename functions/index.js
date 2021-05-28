@@ -45,7 +45,6 @@ const htmlToText = require('html-to-text');
 const nodemailer = require('nodemailer');
 
 const moment = require('moment');
-import localization from 'moment/locale/de';
 
 app.use(cors({
     origin: true
