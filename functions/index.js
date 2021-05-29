@@ -151,7 +151,7 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
                 })
             });
 
-            //this.createWordPressPage(json, date, dateNow);
+            createWordPressPage(json, date, dateNow);
 
         }); //fetch Ende
     });
@@ -211,7 +211,7 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
                 })
             });
 
-            createWordPressPage(json, date, dateNow);
+            //createWordPressPage(json, date, dateNow);
         }); //fetch Ende
     });
 
