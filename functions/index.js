@@ -493,6 +493,7 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
 
     console.log("Update Type: " + req.body.type);
+    console.log("stripeInvoiceId: " + req.body.id);
 
     const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', req.body.id).get();
 
