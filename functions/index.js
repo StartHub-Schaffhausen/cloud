@@ -34,7 +34,7 @@ const axios = require('axios');
 const fetch = require('node-fetch');
 const apicache = require('apicache');
 
-const wordpress = require( "wordpress" );
+const wordpress = require("wordpress");
 
 const app = express();
 
@@ -108,52 +108,52 @@ exports.scheduleMonthlyEmail = functions.region("europe-west6").pubsub.schedule(
         let date = now.subtract(1, 'months'); // 7 months, 7 days and 7 seconds ago
 
         const now2 = moment();
-        let dateNow = now2.subtract(1 , 'days');
+        let dateNow = now2.subtract(1, 'days');
         //let dateNow = new Date();
 
         fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "content-type": "application/json;charset=UTF-8",
-            },
-            "method": "GET",
-            "mode": "cors"
-        }).then(res => res.json())
-        .then(async json => {
+                "headers": {
+                    "accept": "application/json, text/plain, */*",
+                    "content-type": "application/json;charset=UTF-8",
+                },
+                "method": "GET",
+                "mode": "cors"
+            }).then(res => res.json())
+            .then(async json => {
 
-            let startupString = "";
-            for (let startup of json) {
-                //console.log(startup.name);
+                let startupString = "";
+                for (let startup of json) {
+                    //console.log(startup.name);
 
-                if (startup.address.careOf) {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
-                } else {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")"; 
+                    if (startup.address.careOf) {
+                        startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
+                    } else {
+                        startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
+                    }
+                    // Add purpose
+                    startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
+
                 }
-                // Add purpose
-                startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
 
-            }
+                let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('monthly', '==', true).get();
+                partnerRef.forEach(async partner => {
 
-            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('monthly', '==', true).get();
-            partnerRef.forEach(async partner => {
-
-                let mail = await db.collection('mail').add({
-                    to: partner.data().email,
-                    template: {
-                        name: 'PartnerMonthlyNewsletter',
-                        data: {
-                            firstName: partner.data().firstName,
-                            lastName: partner.data().lastName,
-                            startupString: startupString
+                    let mail = await db.collection('mail').add({
+                        to: partner.data().email,
+                        template: {
+                            name: 'PartnerMonthlyNewsletter',
+                            data: {
+                                firstName: partner.data().firstName,
+                                lastName: partner.data().lastName,
+                                startupString: startupString
+                            },
                         },
-                    },
-                })
-            });
+                    })
+                });
 
-            createWordPressPage(json, date, dateNow);
+                createWordPressPage(json, date, dateNow);
 
-        }); //fetch Ende
+            }); //fetch Ende
     });
 
 
@@ -172,47 +172,47 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
         //let dateNow = new Date();
 
         fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "content-type": "application/json;charset=UTF-8",
-            },
-            "method": "GET",
-            "mode": "cors"
-        }).then(res => res.json())
-        .then(async json => {
+                "headers": {
+                    "accept": "application/json, text/plain, */*",
+                    "content-type": "application/json;charset=UTF-8",
+                },
+                "method": "GET",
+                "mode": "cors"
+            }).then(res => res.json())
+            .then(async json => {
 
-            let startupString = "";
-            for (let startup of json) {
-                //console.log(startup.name);
+                let startupString = "";
+                for (let startup of json) {
+                    //console.log(startup.name);
 
-                if (startup.address.careOf) {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
-                } else {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")"; 
+                    if (startup.address.careOf) {
+                        startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
+                    } else {
+                        startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
+                    }
+                    // Add purpose
+                    startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
+
                 }
-                // Add purpose
-                startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
 
-            }
+                let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('weekly', '==', true).get();
+                partnerRef.forEach(async partner => {
 
-            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).where('weekly', '==', true).get();
-            partnerRef.forEach(async partner => {
-
-                let mail = await db.collection('mail').add({
-                    to: partner.data().email,
-                    template: {
-                        name: 'PartnerWeeklyNewsletter',
-                        data: {
-                            firstName: partner.data().firstName,
-                            lastName: partner.data().lastName,
-                            startupString: startupString
+                    let mail = await db.collection('mail').add({
+                        to: partner.data().email,
+                        template: {
+                            name: 'PartnerWeeklyNewsletter',
+                            data: {
+                                firstName: partner.data().firstName,
+                                lastName: partner.data().lastName,
+                                startupString: startupString
+                            },
                         },
-                    },
-                })
-            });
+                    })
+                });
 
-            //createWordPressPage(json, date, dateNow);
-        }); //fetch Ende
+                //createWordPressPage(json, date, dateNow);
+            }); //fetch Ende
     });
 
 
@@ -244,7 +244,7 @@ app.get('/testmail', async (req, res) => {
                 if (startup.address.careOf) {
                     startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
                 } else {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")"; 
+                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
                 }
                 // Add purpose
                 startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
@@ -371,7 +371,7 @@ Eschenz	1835
             "referrer": "https://www.zefix.ch/de/search/shab/welcome",
             "referrerPolicy": "no-referrer-when-downgrade",
             "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"legalSeats\":[1306,1300,1308,1319,1316,1303,1314,1315,1313,1318,1302,1288,1299,1297,1294,1311,1286,1305,1301,1310,1309,1289,1317,1300,1300,1295,31,26,27,24,22,32,37,19,3050,1977,2908,1974,1835],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
-//            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
+            //            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
             "method": "POST",
             "mode": "cors"
         }).then(res => res.json())
@@ -431,20 +431,20 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 });
 */
 
-  exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
+exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
 
-      const email = user.email; // The email of the user.
+    const email = user.email; // The email of the user.
 
-    if ( email.search('@starthub.sh')){
+    if (email.search('@starthub.sh')) {
         admin.auth().setCustomUserClaims(user.uid, {
             admin: true,
             isStartHub: true,
             isBock: false
         });
     }
-    
-    if (email.search('@bockonline.ch')){
-        admin.auth().setCustomUserClaims(user.uid,{
+
+    if (email.search('@bockonline.ch')) {
+        admin.auth().setCustomUserClaims(user.uid, {
             admin: false,
             isStartHub: false,
             isBock: true
@@ -456,20 +456,20 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
     return db.collection('users').doc(user.uid).set({
         email: email
     });
-    
-    
-    
+
+
+
     // ...
 });
 
 
-  exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((user) => {
+exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((user) => {
 
-      if (!user.emailVerified){
+    if (!user.emailVerified) {
         admin
             .auth()
             .generateEmailVerificationLink(user.email, {})
-            .then( (link) => {
+            .then((link) => {
                 // Construct email verification template, embed the link and send
                 // using custom SMTP server.
                 return db.collection('mail').add({
@@ -485,31 +485,128 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
             .catch((error) => {
                 // Some error occurred.
             });
+    }
+    // ...
+});
+
+
+exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
+
+    console.log("Update Type: " + req.body.type);
+
+    const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', req.body.id).get();
+
+    if (!invoiceList.empty) {
+
+        console.log("Invoice found");
+
+        const invoice = invoiceList.docs[0].data();
+        const userId = invoice.userId; //only one!
+        const reservationId = invoice.reservationId; //only one!
+
+        const pdf = req.body.data.object.invoice_pdf;
+
+        if (req.body.type == 'invoice.created') {
+
+            //create user invoice
+            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+                statusPaid: false,
+                pdf: pdf,
+                stripeInvoiceId: req.body.id,
+                stripeInvoiceUrl: invoice.stripeInvoiceUrl,
+                stripeInvoiceRecord: invoice.stripeInvoiceRecord
+            });
+
+            //update invoice:
+            await db.collection('invoices').doc(reservationId).set({
+                statusPaid: false,
+                pdf: pdf,
+            }, {
+                merge: true
+            });
         }
-        // ...
-          });
 
-          function convertHtml(list) {
-            for (let listEl in list) {
-                for (let pubEl in list[listEl].shabPub) {
-        
-                    list[listEl].shabPub[pubEl].message = htmlToText.fromString(list[listEl].shabPub[pubEl].message);
-                    list[listEl].shabPub[pubEl].pdfLink = "https://www.shab.ch/shabforms/servlet/Search?EID=7&DOCID=" + list[listEl].shabPub[pubEl].shabId;
-                }
-            }
-            return list;
+    } else {
+        console.log("NO Invoice found");
+    }
+
+    console.log(JSON.stringify(req.body));
+    resp.end();
+});
+
+
+exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
+
+    console.log("DELETE INVOICES");
+
+    const userId = context.params.userId;
+    const reservationId = context.params.reservationId;
+
+    let reservation = await db.collection('reservations').doc(reservationId).get();
+
+    await db.collection('reservations').doc(reservationId).delete();
+    await db.collection('invoices').doc(reservationId).delete();
+    return db.collection('resources').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
+
+});
+
+exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onCreate(async (snapshot, context) => {
+
+    const userId = context.params.userId;
+    const reservationId = context.params.reservationId;
+
+    let userReservationData = snapshot.data();
+    userReservationData.id = snapshot.id;
+
+    const user = await db.collection('users').doc(userId).get();
+
+    //ONLY ADD WHEN PAID!!
+    //add RESERVATION
+    //const reservation = await db.collection('reservations').doc(reservationId).set(userReservationData);
+
+    //Add Reservation to DESK
+    //const deskInvoice = await db.collection('resources').doc(userReservationData.desk.id).collection('reservation').doc(reservationId).set(userReservationData);
+
+    //Create Invoice
+    const invoiceRef = await db.collection('invoices').doc(reservationId).set({
+        email: user.data().email,
+        daysUntilDue: 0,
+        items: [{
+            amount: userReservationData.price * 100,
+            currency: "chf",
+            quantity: 1, // Optional, defaults to 1.
+            description: "Meeting-Point Reservation: " + userReservationData.desk.title + " Reservations-Typ: " + userReservationData.bookingTypeDescription
+        }],
+        reservationId: reservationId,
+        userId: userId,
+
+
+    });
+
+});
+
+
+function convertHtml(list) {
+    for (let listEl in list) {
+        for (let pubEl in list[listEl].shabPub) {
+
+            list[listEl].shabPub[pubEl].message = htmlToText.fromString(list[listEl].shabPub[pubEl].message);
+            list[listEl].shabPub[pubEl].pdfLink = "https://www.shab.ch/shabforms/servlet/Search?EID=7&DOCID=" + list[listEl].shabPub[pubEl].shabId;
         }
+    }
+    return list;
+}
 
 
-function createWordPressPage(json, date, dateNowe){
-    
+function createWordPressPage(json, date, dateNowe) {
+
     let startupString = "";
     for (let startup of json) {
         //console.log(startup.name);
         if (startup.address.careOf) {
             startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
         } else {
-            startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")"; 
+            startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
         }
         // Add purpose
         startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
@@ -531,17 +628,17 @@ function createWordPressPage(json, date, dateNowe){
         slug: "gruendungen-" + moment().locale('de').format('YYYY') + "-" + moment().locale('de').format('MM'),
         parent: 1998
 
-        
+
     }, function (error, data) {
         console.log("Post sent! The server replied with the following:\n");
         console.log(arguments);
         console.log("\n");
     });
-     
+
     /*client.getPosts(function( error, posts ) {
         for (let post of posts){
             console.log(JSON.stringify(post));
         }
     });*/
-    
+
 };
