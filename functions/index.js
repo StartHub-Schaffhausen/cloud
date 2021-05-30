@@ -495,7 +495,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
     console.log("Update Type: " + req.body.type);
     console.log("stripeInvoiceId: " + req.body.id);
 
-    const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', req.body.id).get();
+    const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', req.body.data.object.id).get();
 
     if (!invoiceList.empty) {
 
@@ -511,20 +511,37 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
             //create user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
-                statusPaid: false,
+                statusPaid: req.body.data.object.paid,
                 pdf: pdf,
-                stripeInvoiceId: req.body.id,
+                stripeInvoiceId: req.body.data.object.id,
                 stripeInvoiceUrl: invoice.stripeInvoiceUrl,
                 stripeInvoiceRecord: invoice.stripeInvoiceRecord
             });
 
             //update invoice:
             await db.collection('invoices').doc(reservationId).set({
-                statusPaid: false,
+                statusPaid: req.body.data.object.paid,
                 pdf: pdf,
             }, {
                 merge: true
             });
+        } else if (req.body.type == 'invoice.updated') {
+            //create user invoice
+            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+                statusPaid: req.body.data.object.paid,
+                pdf: pdf
+            }, {
+                merge: true
+            });
+
+            //update invoice:
+            await db.collection('invoices').doc(reservationId).set({
+                statusPaid: req.body.data.object.paid,
+                pdf: pdf
+            }, {
+                merge: true
+            });
+
         }
 
     } else {
