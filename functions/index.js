@@ -506,8 +506,9 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         console.log(">>> Invoice found");
 
         const invoiceData = invoiceList.docs[0].data();
-        const userId = invoice.userId; //only one!
-        const reservationId = invoice.reservationId; //only one!
+        const userId = invoiceData.userId; //only one!
+        const reservationId = invoiceData.reservationId; //only one!
+        
         const pdf = req.body.data.object.invoice_pdf || "";
 
          if (req.body.type == 'invoice.created') {
