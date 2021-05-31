@@ -592,12 +592,12 @@ exports.deleteInvoice = functions.region('europe-west6').firestore.document('/us
 
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
-    const reservation = await db.collection('reservations').doc(reservationId).get();
+    const reservationRef = await db.collection('reservations').doc(reservationId).get();
 
     //global
     await db.collection('reservations').doc(reservationId).delete();
-    await db.collection('invoices').doc(reservationId).delete();
-    await db.collection('desks').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
+    //await db.collection('invoices').doc(reservationId).delete();
+    await db.collection('desks').doc(reservationRef.data().desk.id).collection('reservations').doc(reservationId).delete();
 
     //user
     //GIBT ES NICHT MEHR await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
@@ -629,6 +629,13 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         reservationId: reservationId,
         userId: userId,
     });
+
+    return db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(reservationId).set({
+        dateFrom: userReservationData.dateFrom,
+        dateTo: userReservationData.dateTo,
+        bookingType: userReservationData.bookingType
+    });
+
 });
 
 function convertHtml(list) {
