@@ -596,36 +596,38 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     
     console.log(">>> Delete Reservation: " + JSON.stringify(snapshot.data()));
 
-    //Format Date
-    snapshot.data().dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
-    snapshot.data().dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
+    let reservation = snapshot.data();
 
-    console.log(snapshot.data().dateFrom);
-    console.log(snapshot.data().dateTo);
+    //Format Date
+    reservation.dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
+    reservation.dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
+
+    console.log(reservation.dateFrom);
+    console.log(reservation.dateTo);
 
     //Falls Tagesbuchungen, dann ganze Reservation löschen
-    if (snapshot.data().type=='Day' || snapshot.data().type=='Week' || snapshot.data().type=='Month'){   
-        for (var d = snapshot.data().dateFrom; d <= snapshot.data().dateTo; d.setDate(d.getDate() + 1)) {
-            await db.collection('desks').doc(snapshot.data().desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();   
+    if (reservation.type=='Day' || reservation.type=='Week' || reservation.type=='Month'){   
+        for (var d = reservation.dateFrom; d <= reservation.dateTo; d.setDate(d.getDate() + 1)) {
+            await db.collection('desks').doc(reservation.desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();   
         }
     }else{ //Falls halbtagesbuchungen: 
-        let dayRef = await db.collection('desks').doc(snapshot.data().desk.id)
+        let dayRef = await db.collection('desks').doc(reservation.desk.id)
         .collection('reservations')
-        .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).get();
+        .doc(reservation.dateFrom.toISOString().substr(0,10)).get();
         
         const object = dayRef.data();
-        object.delete(snapshot.data().type);
+        object.delete(reservation.type);
 
         if(object.hasOwnProperty('Morning') || object.hasOwnProperty('Afternoon')){
             //Falls noch morgen/nachmittag, dann nichts am object ändern.
-            await db.collection('desks').doc(snapshot.data().desk.id)
+            await db.collection('desks').doc(reservation.desk.id)
             .collection('reservations')
-            .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).set(object);
+            .doc(reservation.dateFrom.toISOString().substr(0,10)).set(object);
         }else{
             //falls keine halbtagesbuchung mehr vorhanden, dann löschen.
-            await db.collection('desks').doc(snapshot.data().desk.id)
+            await db.collection('desks').doc(reservation.desk.id)
             .collection('reservations')
-            .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).delete()
+            .doc(reservation.dateFrom.toISOString().substr(0,10)).delete()
         }
     }
     return true;
