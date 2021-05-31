@@ -45,6 +45,7 @@ const htmlToText = require('html-to-text');
 const nodemailer = require('nodemailer');
 
 const moment = require('moment');
+const { object } = require('firebase-functions/lib/providers/storage');
 
 app.use(cors({
     origin: true
@@ -586,18 +587,45 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 });
 
 
-exports.deleteInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
+exports.deleteReservation = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
     //CLEAN UP RESERVATION / INVOICES
     console.log("CLEAN UP/DELETE INVOICES & RESERVATIONS");
 
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
-    const reservationRef = await db.collection('reservations').doc(reservationId).get();
+    
+    console.log(">>> Delete Reservation: " + JSON.stringify(snapshot.data()));
 
     //global
-    await db.collection('reservations').doc(reservationId).delete();
+    //await db.collection('reservations').doc(reservationId).delete();
     //await db.collection('invoices').doc(reservationId).delete();
-    await db.collection('desks').doc(reservationRef.data().desk.id).collection('reservations').doc(reservationId).delete();
+
+    //Falls Tagesbuchungen, dann ganze Reservation löschen
+    if (snapshot.data().type=='Day' || snapshot.data().type=='Week' || snapshot.data().type=='Month'){   
+        for (var d = snapshot.data().dateFrom; d <= snapshot.data().dateTo; d.setDate(d.getDate() + 1)) {
+            await db.collection('desks').doc(snapshot.data().desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();   
+        }
+    }else{
+        let dayRef = await db.collection('desks').doc(snapshot.data().desk.id)
+        .collection('reservations')
+        .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).get();
+        
+        const object = dayRef.data();
+        object.delete(snapshot.data().type);
+
+        if(object.hasOwnProperty('Morning') || object.hasOwnProperty('Afternoon')){
+            //Falls noch morgen/nachmittag, dann nichts am object ändern.
+            await db.collection('desks').doc(snapshot.data().desk.id)
+            .collection('reservations')
+            .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).set(object);
+        }else{
+            //falls keine halbtagesbuchung mehr vorhanden, dann löschen.
+            await db.collection('desks').doc(snapshot.data().desk.id)
+            .collection('reservations')
+            .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).delete()
+        }
+    }
+        
 
     //user
     //GIBT ES NICHT MEHR await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
