@@ -635,11 +635,34 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     
     for (var d = dateFrom; d <= dateTo; d.setDate(d.getDate() + 1)) {
 
-        let object = {};
+  
+
+        //get current Date
+        let dayRef = await db.collection('desks').doc(userReservationData.desk.id)
+        .collection('reservations')
+        .doc(new Date(d).toISOString().substr(0,10)).get();
+        dayRef.data();
+
+        let object = dayRef.data() || {};
         object[userReservationData.bookingType] = reservationId;
-        await db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(new Date(d).toISOString().substr(0,10)).set(object, {
-            merge: true
-        });
+
+        if (userReservationData.bookingType === 'Morning' && object.hasOwnProperty('Afternoon') ){
+            object['Day']  = reservationId;
+        }
+
+        if (userReservationData.bookingType === 'Afternoon' && object.hasOwnProperty('Morning') ){
+            object['Day']  = reservationId;
+        }
+
+        if (userReservationData.bookingType === 'Day'){
+            object['Morning']  = reservationId;
+            object['Afternoon']  = reservationId;
+        }
+
+        //set current Date
+        await db.collection('desks').doc(userReservationData.desk.id)
+        .collection('reservations')
+        .doc(new Date(d).toISOString().substr(0,10)).set(object);
     }
 
 });
