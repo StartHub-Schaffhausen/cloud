@@ -491,31 +491,34 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 
 
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
+//TRIGGER FIRESTORE FROM STRIPE: 
 
-    console.log("Update Type: " + req.body.type);
-    console.log("stripeInvoiceId: " + req.body.id);
+    console.log(">>> UPDATE MODE: " + req.body.type);
+    console.log(">>> stripeInvoiceId: " + req.body.data.object.id);
+    console.log(">>> DATA: " + JSON.stringify(req.body));
 
-    const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', req.body.data.object.id).get();
+    const stripeInvoiceId = req.body.data.object.id;
 
-    if (!invoiceList.empty) {
+    const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', stripeInvoiceId).get();
+    if (invoiceList.empty) {
+        console.log(">>> NO Invoice found");
+    } else {
+        console.log(">>> Invoice found");
 
-        console.log("Invoice found");
-
-        const invoice = invoiceList.docs[0].data();
+        const invoiceData = invoiceList.docs[0].data();
         const userId = invoice.userId; //only one!
         const reservationId = invoice.reservationId; //only one!
-
         const pdf = req.body.data.object.invoice_pdf || "";
 
          if (req.body.type == 'invoice.created') {
 
             //create user invoice
-            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+            /*await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
-                stripeInvoiceId: req.body.data.object.id,
-                stripeInvoiceUrl: invoice.stripeInvoiceUrl,
-                stripeInvoiceRecord: invoice.stripeInvoiceRecord
+                stripeInvoiceId: stripeInvoiceId,
+                stripeInvoiceUrl: invoiceData.stripeInvoiceUrl,
+                stripeInvoiceRecord: invoiceData.stripeInvoiceRecord
             });
 
             //update existing invoice:
@@ -524,13 +527,16 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 pdf: pdf,
             }, {
                 merge: true
-            });
-/*
+            });*/
+
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
-                pdf: pdf
+                pdf: pdf,
+                stripeInvoiceId: stripeInvoiceId,
+                stripeInvoiceUrl: invoiceData.stripeInvoiceUrl,
+                stripeInvoiceRecord: invoiceData.stripeInvoiceRecord
             }, {
                 merge: true
             });
@@ -542,12 +548,11 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             }, {
                 merge: true
             });
-*/
+
         } else if (req.body.type == 'invoice.paid') {
             //update user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
-                pdf: pdf
             }, {
                 merge: true
             });
@@ -555,39 +560,38 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             //update invoice:
             await db.collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
-                pdf: pdf
             }, {
                 merge: true
             });
 
         }
-
-    } else {
-        console.log("NO Invoice found");
     }
-
-    console.log(JSON.stringify(req.body));
     resp.end();
 });
 
 
-exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
-
-    console.log("DELETE INVOICES");
+exports.deleteInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
+    //CLEAN UP RESERVATION / INVOICES
+    console.log("CLEAN UP/DELETE INVOICES & RESERVATIONS");
 
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
+    const reservation = await db.collection('reservations').doc(reservationId).get();
 
-    let reservation = await db.collection('reservations').doc(reservationId).get();
-
+    //global
     await db.collection('reservations').doc(reservationId).delete();
     await db.collection('invoices').doc(reservationId).delete();
-    return db.collection('resources').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
+    await db.collection('resources').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
 
+    //user
+    await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
+
+    return true;
 });
 
 exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onCreate(async (snapshot, context) => {
 
+    //CREATE GLOBAL INVOICE FROM RESERVATION TO TRIGGER EXTENSION
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
 
@@ -615,8 +619,6 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         }],
         reservationId: reservationId,
         userId: userId,
-
-
     });
 
 });
