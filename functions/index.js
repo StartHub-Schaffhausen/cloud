@@ -534,15 +534,21 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             //update user invoice
 
             const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+            console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
 
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
-                description: invoiceData.description,
-                reservation: reservation.data(),
-                stripeInvoiceId: stripeInvoiceId,
-                stripeInvoiceUrl: invoiceData.stripeInvoiceUrl,
-                stripeInvoiceRecord: invoiceData.stripeInvoiceRecord
+                
+                reservationFrom:            reservation.data().dateFrom,
+                reservationTo:              reservation.data().dateTo,
+                reservationDeskId:          reservation.data().desk.id,
+                reservationDeskName:        reservation.data().desk.name,
+                reservationDeskDescription: reservation.data().desk.description,
+                reservationTypeDescription: reservation.data().bookingTypeDescription,               
+                stripeInvoiceId:            stripeInvoiceId,
+                stripeInvoiceUrl:           invoiceData.stripeInvoiceUrl,
+                stripeInvoiceRecord:        invoiceData.stripeInvoiceRecord
             }, {
                 merge: true
             });
@@ -550,7 +556,13 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             //update invoice:
             await db.collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
-                pdf: pdf
+                pdf: pdf,
+                reservationFrom:            reservation.data().dateFrom,
+                reservationTo:              reservation.data().dateTo,
+                reservationDeskId:          reservation.data().desk.id,
+                reservationDeskName:        reservation.data().desk.name,
+                reservationDeskDescription: reservation.data().desk.description,
+                reservationTypeDescription: reservation.data().bookingTypeDescription,    
             }, {
                 merge: true
             });
