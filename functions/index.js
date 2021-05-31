@@ -536,16 +536,10 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
             console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
 
-            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+            await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
-                
-                reservationFrom:            reservation.data().dateFrom,
-                reservationTo:              reservation.data().dateTo,
-                reservationDeskId:          reservation.data().desk.id,
-                reservationDeskName:        reservation.data().desk.name,
-                reservationDeskDescription: reservation.data().desk.description,
-                reservationTypeDescription: reservation.data().bookingTypeDescription,               
+
                 stripeInvoiceId:            stripeInvoiceId,
                 stripeInvoiceUrl:           invoiceData.stripeInvoiceUrl,
                 stripeInvoiceRecord:        invoiceData.stripeInvoiceRecord
@@ -569,7 +563,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         } else if (req.body.type == 'invoice.paid') {
             //update user invoice
-            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+            await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
             }, {
                 merge: true
