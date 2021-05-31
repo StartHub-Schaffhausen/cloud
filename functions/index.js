@@ -596,6 +596,9 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     
     console.log(">>> Delete Reservation: " + JSON.stringify(snapshot.data()));
 
+    snapshot.data().dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
+    snapshot.data().dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
+
     //global
     //await db.collection('reservations').doc(reservationId).delete();
     //await db.collection('invoices').doc(reservationId).delete();
