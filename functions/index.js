@@ -562,6 +562,10 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             });
 
         } else if (req.body.type == 'invoice.paid') {
+
+            //Add Reservation to DESK
+            const deskReservation = await db.collection('desks').doc(userReservationData.desk.id).collection('reservation').doc(reservationId).set(reservation.data());
+
             //update user invoice
             await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
@@ -593,7 +597,7 @@ exports.deleteInvoice = functions.region('europe-west6').firestore.document('/us
     //global
     await db.collection('reservations').doc(reservationId).delete();
     await db.collection('invoices').doc(reservationId).delete();
-    await db.collection('resources').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
+    await db.collection('desks').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
 
     //user
     //GIBT ES NICHT MEHR await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
@@ -611,13 +615,6 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     userReservationData.id = snapshot.id;
 
     const user = await db.collection('users').doc(userId).get();
-
-    //ONLY ADD WHEN PAID!!
-    //add RESERVATION
-    //const reservation = await db.collection('reservations').doc(reservationId).set(userReservationData);
-
-    //Add Reservation to DESK
-    //const deskInvoice = await db.collection('resources').doc(userReservationData.desk.id).collection('reservation').doc(reservationId).set(userReservationData);
 
     //Create Invoice
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
