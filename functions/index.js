@@ -505,9 +505,9 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const userId = invoice.userId; //only one!
         const reservationId = invoice.reservationId; //only one!
 
-        const pdf = req.body.data.object.invoice_pdf;
+        const pdf = req.body.data.object.invoice_pdf || "";
 
-        if (req.body.type == 'invoice.created') {
+         if (req.body.type == 'invoice.created') {
 
             //create user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
@@ -516,15 +516,18 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 stripeInvoiceId: req.body.data.object.id,
                 stripeInvoiceUrl: invoice.stripeInvoiceUrl,
                 stripeInvoiceRecord: invoice.stripeInvoiceRecord
+            },{
+                merge:true
             });
 
-            //update invoice:
+            //update existing invoice:
             await db.collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
             }, {
                 merge: true
             });
+            
         } else if (req.body.type == 'invoice.updated') {
             //create user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
