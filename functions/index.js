@@ -634,11 +634,11 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     const dateTo = new Date(userReservationData.dateTo._seconds * 1000);
     
     for (var d = dateFrom; d <= dateTo; d.setDate(d.getDate() + 1)) {
-        await db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(new Date(d).toISOString().substr(0,10)).set({
-            dateFrom: userReservationData.dateFrom,
-            dateTo: userReservationData.dateTo,
-            bookingType: userReservationData.bookingType,
-            reservationId: reservationId
+
+        let object = {};
+        object[userReservationData.bookingType] = reservationId;
+        await db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(new Date(d).toISOString().substr(0,10)).set(object, {
+            merge: true
         });
     }
 
