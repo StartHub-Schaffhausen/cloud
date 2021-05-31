@@ -516,8 +516,6 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 stripeInvoiceId: req.body.data.object.id,
                 stripeInvoiceUrl: invoice.stripeInvoiceUrl,
                 stripeInvoiceRecord: invoice.stripeInvoiceRecord
-            },{
-                merge:true
             });
 
             //update existing invoice:
@@ -527,9 +525,26 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             }, {
                 merge: true
             });
-            
+/*
         } else if (req.body.type == 'invoice.updated') {
-            //create user invoice
+            //update user invoice
+            await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
+                statusPaid: req.body.data.object.paid,
+                pdf: pdf
+            }, {
+                merge: true
+            });
+
+            //update invoice:
+            await db.collection('invoices').doc(reservationId).set({
+                statusPaid: req.body.data.object.paid,
+                pdf: pdf
+            }, {
+                merge: true
+            });
+*/
+        } else if (req.body.type == 'invoice.paid') {
+            //update user invoice
             await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf
