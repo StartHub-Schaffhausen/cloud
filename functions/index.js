@@ -627,14 +627,14 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             amount: userReservationData.price * 100,
             currency: "chf",
             quantity: 1, // Optional, defaults to 1.
-            description: "Meeting-Point Reservation: " + userReservationData.desk.title + " Reservations-Typ: " + userReservationData.bookingTypeDescription
+            description: 'Meeting-Point Reservation "'+ userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription 
+            + '. Beginn: ' + newDate(userReservationData.dateFrom.seconds * 1000).toISOString().substr(0,10) 
+            + ' Ende: ' + newDate(userReservationData.dateTo.seconds * 1000).toISOString().substr(0,10)
         }],
         reservationId: reservationId,
         userId: userId,
     });
-
 });
-
 
 function convertHtml(list) {
     for (let listEl in list) {
