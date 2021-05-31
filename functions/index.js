@@ -603,10 +603,10 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
 
     console.log(reservation.dateFrom);
     console.log(reservation.dateTo);
-    console.log(reservation.type);
+    console.log(reservation.bookingType);
 
     //Falls Tagesbuchungen, dann ganze Reservation löschen
-    if (reservation.type=='Day' || reservation.type=='Week' || reservation.type=='Month'){   
+    if (reservation.bookingType=='Day' || reservation.bookingType=='Week' || reservation.bookingType=='Month'){   
         for (var d = reservation.dateFrom; d <= reservation.dateTo; d = new Date(d.getTime() + (1000*60*60*24))) {
             await db.collection('desks').doc(reservation.desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();
             console.log(">>> DELETE RESERVATION DATE: " + d.toISOString().substr(0,10));   
@@ -618,7 +618,7 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
         
         const object = dayRef.data();
         
-        delete object[reservation.type]
+        delete object[reservation.bookingType]
         
         if(object.hasOwnProperty('Morning') || object.hasOwnProperty('Afternoon')){
             //Falls noch morgen/nachmittag, dann nichts am object ändern.
