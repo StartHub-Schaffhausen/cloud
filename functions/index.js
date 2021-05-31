@@ -637,7 +637,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         await db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(new Date(d).toISOString()).set({
             dateFrom: userReservationData.dateFrom,
             dateTo: userReservationData.dateTo,
-            bookingType: userReservationData.bookingType
+            bookingType: userReservationData.bookingType,
+            reservationId: reservationId
         });
     }
 
