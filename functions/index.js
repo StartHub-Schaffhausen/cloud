@@ -630,11 +630,16 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         userId: userId,
     });
 
-    return db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(reservationId).set({
-        dateFrom: userReservationData.dateFrom,
-        dateTo: userReservationData.dateTo,
-        bookingType: userReservationData.bookingType
-    });
+    const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
+    const dateTo = new Date(userReservationData.dateTo._seconds * 1000);
+    
+    for (var d = dateFrom; d <= dateTo; d.setDate(d.getDate() + 1)) {
+        await db.collection('desks').doc(userReservationData.desk.id).collection('reservations').doc(new Date(d).toISOString()).set({
+            dateFrom: userReservationData.dateFrom,
+            dateTo: userReservationData.dateTo,
+            bookingType: userReservationData.bookingType
+        });
+    }
 
 });
 
