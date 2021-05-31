@@ -646,16 +646,16 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         let object = dayRef.data() || {};
         object[userReservationData.bookingType] = reservationId;
 
-        if (userReservationData.bookingType === 'Morning' && object.hasOwnProperty('Afternoon') ){
+        if (userReservationData.bookingType === 'Morning' ){ //Falls Morgen gebucht, Tagesbuchung nicht möglich
             object['Day']  = reservationId;
         }
 
-        if (userReservationData.bookingType === 'Afternoon' && object.hasOwnProperty('Morning') ){
+        if (userReservationData.bookingType === 'Afternoon' ){ //Falls Nachmittag gebucht, Tagesbuchung nicht möglich
             object['Day']  = reservationId;
         }
 
-        if (userReservationData.bookingType === 'Day'){
-            object['Morning']  = reservationId;
+        if (userReservationData.bookingType === 'Day'){ // Falls Tagesbuchung, Morgen/Nachmittag nicht möglich
+            object['Morning']  = reservationId; 
             object['Afternoon']  = reservationId;
         }
 
