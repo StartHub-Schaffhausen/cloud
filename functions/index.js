@@ -596,7 +596,7 @@ exports.deleteInvoice = functions.region('europe-west6').firestore.document('/us
     await db.collection('resources').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).delete();
 
     //user
-    await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
+    //GIBT ES NICHT MEHR await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
 
     return true;
 });
