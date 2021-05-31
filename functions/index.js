@@ -600,6 +600,9 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     snapshot.data().dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
     snapshot.data().dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
 
+    console.log(snapshot.data().dateFrom);
+    console.log(snapshot.data().dateTo);
+
     //Falls Tagesbuchungen, dann ganze Reservation löschen
     if (snapshot.data().type=='Day' || snapshot.data().type=='Week' || snapshot.data().type=='Month'){   
         for (var d = snapshot.data().dateFrom; d <= snapshot.data().dateTo; d.setDate(d.getDate() + 1)) {
