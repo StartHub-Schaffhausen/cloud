@@ -635,15 +635,13 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     
     for (var d = dateFrom; d <= dateTo; d.setDate(d.getDate() + 1)) {
 
-  
-
         //get current Date
         let dayRef = await db.collection('desks').doc(userReservationData.desk.id)
         .collection('reservations')
         .doc(new Date(d).toISOString().substr(0,10)).get();
-        dayRef.data();
 
         let object = dayRef.data() || {};
+        
         object[userReservationData.bookingType] = reservationId;
 
         if (userReservationData.bookingType === 'Morning' ){ //Falls Morgen gebucht, Tagesbuchung nicht möglich
@@ -657,6 +655,18 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         if (userReservationData.bookingType === 'Day'){ // Falls Tagesbuchung, Morgen/Nachmittag nicht möglich
             object['Morning']  = reservationId; 
             object['Afternoon']  = reservationId;
+        }
+
+        if (userReservationData.bookingType === 'Week'){ // Falls Woche, Morgen/Nachmittag/Tag/Woche/Monat nicht möglich
+            object['Morning']  = reservationId; 
+            object['Afternoon']  = reservationId;
+            object['Day']  = reservationId;
+        }
+
+        if (userReservationData.bookingType === 'Month'){ // Falls Woche, Morgen/Nachmittag/Tag/Woche/Monat nicht möglich
+            object['Morning']  = reservationId; 
+            object['Afternoon']  = reservationId;
+            object['Day']  = reservationId;
         }
 
         //set current Date
