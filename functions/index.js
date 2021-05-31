@@ -616,8 +616,9 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
         .doc(reservation.dateFrom.toISOString().substr(0,10)).get();
         
         const object = dayRef.data();
-        object.delete(reservation.type);
-
+        
+        delete object[reservation.type]
+        
         if(object.hasOwnProperty('Morning') || object.hasOwnProperty('Afternoon')){
             //Falls noch morgen/nachmittag, dann nichts am object ändern.
             await db.collection('desks').doc(reservation.desk.id)
