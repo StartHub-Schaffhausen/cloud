@@ -594,9 +594,8 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
     
-    console.log(">>> Delete Reservation: " + JSON.stringify(snapshot.data()));
-
     let reservation = snapshot.data();
+    console.log(">>> Delete Reservation: " + JSON.stringify(reservation));
 
     //Format Date
     reservation.dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
@@ -604,11 +603,13 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
 
     console.log(reservation.dateFrom);
     console.log(reservation.dateTo);
+    console.log(reservation.type);
 
     //Falls Tagesbuchungen, dann ganze Reservation löschen
     if (reservation.type=='Day' || reservation.type=='Week' || reservation.type=='Month'){   
-        for (var d = reservation.dateFrom; d <= reservation.dateTo; d.setDate(d.getDate() + 1)) {
-            await db.collection('desks').doc(reservation.desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();   
+        for (var d = reservation.dateFrom; d <= reservation.dateTo; d = new Date(d.getTime() + (1000*60*60*24))) {
+            await db.collection('desks').doc(reservation.desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();
+            console.log(">>> DELETE RESERVATION DATE: " + d.toISOString().substr(0,10));   
         }
     }else{ //Falls halbtagesbuchungen: 
         let dayRef = await db.collection('desks').doc(reservation.desk.id)
@@ -662,7 +663,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
     const dateTo = new Date(userReservationData.dateTo._seconds * 1000);
     
-    for (var d = dateFrom; d <= dateTo; d.setDate(d.getDate() + 1)) {
+    for (var d = dateFrom; d <= dateTo; d = new Date(d.getTime() + (1000*60*60*24))) {
 
         //get current Date
         let dayRef = await db.collection('desks').doc(userReservationData.desk.id)
