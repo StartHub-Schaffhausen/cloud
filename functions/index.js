@@ -596,22 +596,19 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     
     console.log(">>> Delete Reservation: " + JSON.stringify(snapshot.data()));
 
+    //Format Date
     snapshot.data().dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
     snapshot.data().dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
-
-    //global
-    //await db.collection('reservations').doc(reservationId).delete();
-    //await db.collection('invoices').doc(reservationId).delete();
 
     //Falls Tagesbuchungen, dann ganze Reservation löschen
     if (snapshot.data().type=='Day' || snapshot.data().type=='Week' || snapshot.data().type=='Month'){   
         for (var d = snapshot.data().dateFrom; d <= snapshot.data().dateTo; d.setDate(d.getDate() + 1)) {
             await db.collection('desks').doc(snapshot.data().desk.id).collection('reservations').doc(d.toISOString().substr(0,10)).delete();   
         }
-    }else{
+    }else{ //Falls halbtagesbuchungen: 
         let dayRef = await db.collection('desks').doc(snapshot.data().desk.id)
         .collection('reservations')
-        .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).get();
+        .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).get();
         
         const object = dayRef.data();
         object.delete(snapshot.data().type);
@@ -620,19 +617,14 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
             //Falls noch morgen/nachmittag, dann nichts am object ändern.
             await db.collection('desks').doc(snapshot.data().desk.id)
             .collection('reservations')
-            .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).set(object);
+            .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).set(object);
         }else{
             //falls keine halbtagesbuchung mehr vorhanden, dann löschen.
             await db.collection('desks').doc(snapshot.data().desk.id)
             .collection('reservations')
-            .doc(new Date(snapshot.data().dateFrom).toISOString().substr(0,10)).delete()
+            .doc(snapshot.data().dateFrom.toISOString().substr(0,10)).delete()
         }
     }
-        
-
-    //user
-    //GIBT ES NICHT MEHR await db.collection('users').doc(userId).collection('invoices').doc(reservationId).delete();
-
     return true;
 });
 
