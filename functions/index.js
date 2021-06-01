@@ -442,6 +442,12 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isStartHub: true,
             isBock: false
         });
+        return db.collection('users').doc(user.uid).set({
+            email: email,
+            admin: true,
+            isStartHub: true,
+            isBock: false
+        });
     }
 
     if (email.search('@bockonline.ch')) {
@@ -450,17 +456,14 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isStartHub: false,
             isBock: true
         })
+
+        return db.collection('users').doc(user.uid).set({
+            email: email,
+            admin: true,
+            isStartHub: true,
+            isBock: false
+        });
     }
-
-
-    //const displayName = user.displayName; // The display name of the user.
-    return db.collection('users').doc(user.uid).set({
-        email: email
-    });
-
-
-
-    // ...
 });
 
 
