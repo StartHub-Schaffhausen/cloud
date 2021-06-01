@@ -467,10 +467,10 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
 exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((user) => {
 
     if (!user.emailVerified) {
-        admin
+       return admin
             .auth()
-            .generateEmailVerificationLink(user.email, {})
-            .then((link) => {
+            .generateEmailVerificationLink(user.email)
+            .then(link => {
                 // Construct email verification template, embed the link and send
                 // using custom SMTP server.
                 return db.collection('mail').add({
@@ -486,6 +486,8 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
             .catch((error) => {
                 // Some error occurred.
             });
+    }else{
+        return;
     }
     // ...
 });
