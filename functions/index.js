@@ -761,10 +761,10 @@ function createWordPressPage(json, date, dateNowe) {
 
     client.newPost({
         type: "page",
-        title: "Gründungen " + moment().locale('de').format('MMM YYYY'),
+        title: "Gründungen " + moment().subtract(1, 'day').locale('de').format('MMM YYYY'),
         content: startupString,
         status: "publish",
-        slug: "gruendungen-" + moment().locale('de').format('YYYY') + "-" + moment().locale('de').format('MM'),
+        slug: "gruendungen-" + moment().subtract(1, 'day').locale('de').format('YYYY') + "-" + moment().subtract(1, 'day').locale('de').format('MM'),
         parent: 1998
 
 
