@@ -515,8 +515,6 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const userId = invoiceData.userId; //only one!
         const reservationId = invoiceData.reservationId; //only one!
 
-        const userData = await db.collection("users").doc(userId).get();
-
         const pdf = req.body.data.object.invoice_pdf || "";
 
          if (req.body.type == 'invoice.created') {
@@ -565,9 +563,6 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 reservationDeskName:        reservation.data().desk.name,
                 reservationDeskDescription: reservation.data().desk.description,
                 reservationTypeDescription: reservation.data().bookingTypeDescription,  
-                firstName:                  userData.data().firstName || "Kein Vorname",
-                lastName:                   userData.data().lastName || "Kein Nachname",
-                profilePicture:             userData.data().profilePicture || "Kein Bild",
 
             }, {
                 merge: true
@@ -643,6 +638,13 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
             .doc(reservation.dateFrom.toISOString().substr(0,10)).delete()
         }
     }
+    const invoiceRef = await db.collection('invoices').doc(reservationId).set({
+        canceled: true
+    },{
+        merge: true
+    })
+
+
     return true;
 });
 
@@ -655,11 +657,11 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     let userReservationData = snapshot.data();
     userReservationData.id = snapshot.id;
 
-    const user = await db.collection('users').doc(userId).get();
+    const userData = await db.collection('users').doc(userId).get();
 
     //Create Invoice
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
-        email: user.data().email,
+        email: userData.data().email,
         daysUntilDue: 0,
         items: [{
             amount: userReservationData.price * 100,
@@ -669,6 +671,10 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         }],
         reservationId: reservationId,
         userId: userId,
+        firstName:                  userData.data().firstName || "Kein Vorname",
+        lastName:                   userData.data().lastName || "Kein Nachname",
+        profilePicture:             userData.data().profilePicture || "Kein Bild",
+    
     });
 
     const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
