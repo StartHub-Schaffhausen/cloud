@@ -670,6 +670,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             description: 'Meeting-Point Reservation "'+ userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription  + '. Beginn: ' + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substr(0,10) + ' Ende: ' + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substr(0,10)
         }],
         reservationId: reservationId,
+        canceled: false,
         userId: userId,
         firstName:                  userData.data().firstName || "Kein Vorname",
         lastName:                   userData.data().lastName || "Kein Nachname",
