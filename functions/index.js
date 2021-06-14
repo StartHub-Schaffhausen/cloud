@@ -515,6 +515,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const userId = invoiceData.userId; //only one!
         const reservationId = invoiceData.reservationId; //only one!
 
+        const userData = await db.collection("users").doc(userId).get();
+
         const pdf = req.body.data.object.invoice_pdf || "";
 
          if (req.body.type == 'invoice.created') {
@@ -562,7 +564,11 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 reservationDeskId:          reservation.data().desk.id,
                 reservationDeskName:        reservation.data().desk.name,
                 reservationDeskDescription: reservation.data().desk.description,
-                reservationTypeDescription: reservation.data().bookingTypeDescription,    
+                reservationTypeDescription: reservation.data().bookingTypeDescription,  
+                firstName:                  userData.data().firstName || "Kein Vorname",
+                lastName:                   userData.data().lastName || "Kein Nachname",
+                profilePicture:             userData.data().profilePicture || "Kein Bild",
+
             }, {
                 merge: true
             });
