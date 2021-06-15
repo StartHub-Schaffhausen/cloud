@@ -519,22 +519,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
          if (req.body.type == 'invoice.created') {
 
-            //create user invoice
-            /*await db.collection('users').doc(userId).collection('invoices').doc(reservationId).set({
-                statusPaid: req.body.data.object.paid,
-                pdf: pdf,
-                stripeInvoiceId: stripeInvoiceId,
-                stripeInvoiceUrl: invoiceData.stripeInvoiceUrl,
-                stripeInvoiceRecord: invoiceData.stripeInvoiceRecord
-            });
-
-            //update existing invoice:
-            await db.collection('invoices').doc(reservationId).set({
-                statusPaid: req.body.data.object.paid,
-                pdf: pdf,
-            }, {
-                merge: true
-            });*/
+            //SEND E-MAIL mit RECHNUNG!!!!
 
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
@@ -586,6 +571,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             }, {
                 merge: true
             });
+
+            //SEND E-MAIL mit BESTÄTIGUNG!
 
         }
     }
@@ -709,7 +696,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         if (userReservationData.bookingType === 'Day'){ // Falls Tagesbuchung, Morgen/Nachmittag nicht möglich
             object['Morning']  = reservationId; 
             object['Afternoon']  = reservationId;
-            //object['Day']  = reservationId; Wird oben schon gesetzt
+            object['Day']  = reservationId;     //Wird oben schon gesetzt
             object['Week']  = reservationId;    //braucht es nur für UI
             object['Month']  = reservationId;   //braucht es nur für UI
         }
