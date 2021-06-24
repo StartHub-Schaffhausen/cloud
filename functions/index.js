@@ -682,26 +682,27 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         if (userReservationData.bookingType === 'Morning' ){ //Falls Morgen gebucht, Tagesbuchung nicht möglich
             object['Day']  = reservationId;
             
-            object['Week']  = reservationId;    //braucht es nur für UI
-            object['Month']  = reservationId;   //braucht es nur für UI
+        //    object['Week']  = reservationId;    //braucht es nur für UI
+        //    object['Month']  = reservationId;   //braucht es nur für UI
         }
 
         if (userReservationData.bookingType === 'Afternoon' ){ //Falls Nachmittag gebucht, Tagesbuchung nicht möglich
             object['Day']  = reservationId;
 
-            object['Week']  = reservationId;    //braucht es nur für UI
-            object['Month']  = reservationId;   //braucht es nur für UI
+        //    object['Week']  = reservationId;    //braucht es nur für UI
+        //    object['Month']  = reservationId;   //braucht es nur für UI
         }
 
         if (userReservationData.bookingType === 'Day'){ // Falls Tagesbuchung, Morgen/Nachmittag nicht möglich
             object['Morning']  = reservationId; 
             object['Afternoon']  = reservationId;
             object['Day']  = reservationId;     //Wird oben schon gesetzt
-            object['Week']  = reservationId;    //braucht es nur für UI
-            object['Month']  = reservationId;   //braucht es nur für UI
+        
+            //    object['Week']  = reservationId;    //braucht es nur für UI
+        //    object['Month']  = reservationId;   //braucht es nur für UI
         }
 
-        if (userReservationData.bookingType === 'Week'){ // Falls Woche, Morgen/Nachmittag/Tag/Woche/Monat nicht möglich
+      /*  if (userReservationData.bookingType === 'Week'){ // Falls Woche, Morgen/Nachmittag/Tag/Woche/Monat nicht möglich
             object['Morning']  = reservationId; 
             object['Afternoon']  = reservationId;
             object['Day']  = reservationId;
@@ -715,7 +716,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             object['Day']  = reservationId;
             object['Week']  = reservationId;    //braucht es nur für UI
             object['Month']  = reservationId;   //braucht es nur für UI
-        }
+        }*/
 
         //set current Date
         await db.collection('desks').doc(userReservationData.desk.id)
