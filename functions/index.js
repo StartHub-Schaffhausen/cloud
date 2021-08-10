@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 
+/*
 import {
     config
 } from '../functions/config/config'
@@ -7,6 +8,7 @@ import {
 import {
     format
   } from 'date-fns'
+*/
 
 functions.region('europe-west6');
 // // Create and Deploy Your First Cloud Functions
