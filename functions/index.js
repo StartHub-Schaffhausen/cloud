@@ -700,10 +700,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         userReservationData.price = 19;
     } else if (userReservationData.bookingType == "Week") {
         userReservationData.price = 85;
-    } else if (userReservationData.bookingType == "Month") {
+    } else  {
         userReservationData.price = 320;
-    }else{
-        userReservationData.price = 19;
     }
 
     //Create Invoice
