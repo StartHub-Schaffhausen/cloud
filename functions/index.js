@@ -512,9 +512,6 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
 
-
-
-
     //TRIGGER FIRESTORE FROM STRIPE: 
 
     console.log(">>> UPDATE MODE: " + req.body.type);
@@ -540,7 +537,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
             try{
                 db.collection('mail').add({
-                    to: user.email,
+                    to: invoiceData.email,
                     template: {
                         name: 'MeetinPointReservation',
                         data: {
