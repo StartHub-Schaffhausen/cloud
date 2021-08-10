@@ -1,15 +1,5 @@
 const functions = require('firebase-functions');
 
-/*
-import {
-    config
-} from '../functions/config/config'
-
-import {
-    format
-  } from 'date-fns'
-*/
-
 functions.region('europe-west6');
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -52,14 +42,17 @@ const FormData = require('form-data');
 
 const htmlToText = require('html-to-text');
 
-//const nodemailer = require('nodemailer');
-
-
-
 const moment = require('moment');
-const {
-    object
-} = require('firebase-functions/lib/providers/storage');
+
+/*
+import {
+    config
+} from '../functions/config/config'
+
+import {
+    format
+  } from 'date-fns'
+*/
 
 app.use(cors({
     origin: true
@@ -519,7 +512,7 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
 
-        /*
+    /*
         SEND MAIL --> Stripe Mail ist noch nicht bekannt.. evt verschieben.
     return db.collection('mail').add({
         to: user.email,
@@ -699,20 +692,31 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
 
     const userData = await db.collection('users').doc(userId).get();
 
-    //READ PRICE FROM CONFIG
-    let deskConfig = config.deskConfig;
+    if (userReservationData.bookingType == "Morning") {
+        userReservationData.price = 12;
+    } else if (userReservationData.bookingType == "Afternoon") {
+        userReservationData.price = 12;
+    } else if (userReservationData.bookingType == "Day") {
+        userReservationData.price = 19;
+    } else if (userReservationData.bookingType == "Week") {
+        userReservationData.price = 85;
+    } else if (userReservationData.bookingType == "Month") {
+        userReservationData.price = 320;
+    }else{
+        userReservationData.price = 19;
+    }
 
     //Create Invoice
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
         email: userData.data().email,
         daysUntilDue: 0,
         items: [{
-            amount: userReservationData.price * 100,
+            amount: userReservationData.price * 100, //rappen
             currency: "chf",
             quantity: 1, // Optional, defaults to 1.
-            description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription 
-            + '. Beginn: ' + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(8, 10) + "." +  new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(5, 7) + "." + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(0, 4) + " " +  new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(11,16)
-            + ' Ende: ' + + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(8, 10) + "." +  new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(5, 7) + "." + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(0, 4)  + " " + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(11,16)
+            description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
+                '. Beginn: ' + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(8, 10) + "." + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(5, 7) + "." + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(0, 4) + " " + new Date(userReservationData.dateFrom._seconds * 1000).toISOString().substring(11, 16) +
+                ' Ende: ' + +new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(8, 10) + "." + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(5, 7) + "." + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(0, 4) + " " + new Date(userReservationData.dateTo._seconds * 1000).toISOString().substring(11, 16)
         }],
         reservationId: reservationId,
         canceled: false,
@@ -733,30 +737,24 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             .collection('reservations')
             .doc(new Date(d).toISOString().substr(0, 10)).get();
 
-        let object = dayRef.data() || {};
+        let dataObject = dayRef.data() || {};
 
-        object[userReservationData.bookingType] = reservationId;
+        dataObject[userReservationData.bookingType] = reservationId;
 
         if (userReservationData.bookingType === 'Morning') { //Falls Morgen gebucht, Tagesbuchung nicht möglich
-            object['Day'] = reservationId;
+            dataObject['Day'] = reservationId;
 
-            //    object['Week']  = reservationId;    //braucht es nur für UI
-            //    object['Month']  = reservationId;   //braucht es nur für UI
         } else if (userReservationData.bookingType === 'Afternoon') { //Falls Nachmittag gebucht, Tagesbuchung nicht möglich
-            object['Day'] = reservationId;
+            dataObject['Day'] = reservationId;
 
-            //    object['Week']  = reservationId;    //braucht es nur für UI
-            //    object['Month']  = reservationId;   //braucht es nur für UI
         } else {
-            object['Morning'] = reservationId;
-            object['Afternoon'] = reservationId;
-            object['Day'] = reservationId; //Wird oben schon gesetzt 
+            dataObject['Day'] = reservationId; //Wird oben schon gesetzt 
         }
 
         //set current Date
         await db.collection('desks').doc(userReservationData.desk.id)
             .collection('reservations')
-            .doc(new Date(d).toISOString().substr(0, 10)).set(object);
+            .doc(new Date(d).toISOString().substr(0, 10)).set(dataObject);
     }
 
 });
