@@ -512,23 +512,7 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
 
-    /*
-        SEND MAIL --> Stripe Mail ist noch nicht bekannt.. evt verschieben.
-    return db.collection('mail').add({
-        to: user.email,
-        template: {
-            name: 'MeetinPointReservation',
-            data: {
-                tisch: tisch, 
-                startDatum: startDatum,
-                startUhrzeit: startUhrzeit
-                endeDatum: endeDatum,
-                endeUhrzeit: endeUhrzeit,
-                stripeInvoiceUrl: stripeInvoiceUrl
 
-            },
-        },
-    })*/
 
 
     //TRIGGER FIRESTORE FROM STRIPE: 
@@ -553,8 +537,28 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         if (req.body.type == 'invoice.created') {
 
-            //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon vorher gemacht.
-
+            //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
+            try{
+                db.collection('mail').add({
+                    to: user.email,
+                    template: {
+                        name: 'MeetinPointReservation',
+                        data: {
+                            tisch: reservation.data().desk.name,
+                            startDatum: reservation.data().dateFrom.toISOString().substring(8, 10) + "." + reservation.data().dateFrom.toISOString().substring(5, 7) + "." + reservation.data().dateFrom.toISOString().substring(0, 4),
+                            startUhrzeit: reservation.data().dateFrom.toISOString().substring(11, 16),
+                            endeDatum: reservation.data().dateTo.toISOString().substring(8, 10) + "." + reservation.data().dateTo.toISOString().substring(5, 7) + "." + reservation.data().dateTo.toISOString().substring(0, 4),
+                            endeUhrzeit: reservation.data().dateTo.toISOString().substring(11, 16),
+                            stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
+    
+                        },
+                    },
+                })
+            }catch(e){
+                console.log(e);
+            }
+           
+          
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
 
@@ -606,16 +610,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 merge: true
             });
 
-            //SEND E-MAIL mit BESTÄTIGUNG! --> wird automatisch gemacht. 
-            /*return db.collection('mail').add({
-                to: user.email,
-                template: {
-                    name: 'meetingPointInvoicePaid',
-                    data: {
-                        link: link
-                    },
-                },
-            })*/
+
 
         }
     }
@@ -700,7 +695,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         userReservationData.price = 19;
     } else if (userReservationData.bookingType == "Week") {
         userReservationData.price = 85;
-    } else  {
+    } else  { //month
         userReservationData.price = 320;
     }
 
