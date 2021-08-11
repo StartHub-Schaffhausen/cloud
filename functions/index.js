@@ -454,6 +454,79 @@ app.get('/startup/:id', (req, res) => {
 });
 
 
+app.get('/printStartups/:type/:from/:to', (req, res) => {
+
+    let type = req.params.type;
+    let dateFrom = req.params.from;
+    let dateTo = req.params.to;
+
+    console.log("using dates: " + dateFrom + " / " + dateTo);
+
+    let dateFromISO = new Date(dateFrom).toISOString().slice(0.10);
+    let dateToISO = new Date(dateTo).toISOString().slice(0.10);
+    console.log("using ISO dates: " + dateFromISO + " / " + dateToISO);
+
+    let body = "";
+    let legalForm = 0;
+    switch (type) {
+        case 'ef':
+            legalForm = 1;
+            break;
+        case 'klg':
+            legalForm = 2;
+            break;
+        case 'ag':
+            legalForm = 3;
+            break;
+        case 'gmbh':
+            legalForm = 4;
+            break;
+        case 'all':
+            legalForm = "1,2,3,4";
+            break;
+        default:
+            legalForm = 4;
+    }
+
+
+    fetch("https://www.zefix.ch/ZefixREST/api/v1/shab/search.json", {
+            "headers": {
+                "accept": "application/json, text/plain, */*",
+                "accept-language": "en-US,en;q=0.9,de;q=0.8,fr;q=0.7",
+                "content-type": "application/json;charset=UTF-8",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin"
+            },
+            "referrer": "https://www.zefix.ch/de/search/shab/welcome",
+            "referrerPolicy": "no-referrer-when-downgrade",
+            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"legalSeats\":[1306,1300,1308,1319,1316,1303,1314,1315,1313,1318,1302,1288,1299,1297,1294,1311,1286,1305,1301,1310,1309,1289,1317,1300,1300,1295,31,26,27,24,22,32,37,19,3050,1977,2908,1974,1835],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
+            //            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
+            "method": "POST",
+            "mode": "cors"
+        }).then(res => res.json())
+        .then(json => {
+            //console.log(json)
+            let data = [];
+            if (json && json.list && json.list.length) {
+                data = convertHtml(json.list);
+            }
+            if (json.error) {
+                console.log(type + ": " + json.error.suggestion);
+            }
+
+
+            
+            res.json(data);
+
+        }).catch(error => {
+            res.send("starthub backend error");
+        });
+
+    //res.send("Einzelunternehmen ef | Kollektivgesellschaft kig | Aktiengesellschaft ag | GmbH gmbh");
+});
+
+
 
 exports.api = functions.region("europe-west6").https.onRequest(app);
 
