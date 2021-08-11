@@ -518,7 +518,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
 
             let returnData = "";
             for (let entry of data){
-                returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\n";
+                returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
             }
             res.send(returnData);
 
