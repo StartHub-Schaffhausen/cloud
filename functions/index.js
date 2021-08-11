@@ -456,6 +456,8 @@ app.get('/startup/:id', (req, res) => {
 
 app.get('/printStartups/:type/:from/:to', (req, res) => {
 
+    //https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/printStartups/all/2021-01-01/2021-08-01
+
     let type = req.params.type;
     let dateFrom = req.params.from;
     let dateTo = req.params.to;
@@ -501,7 +503,6 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
             "referrer": "https://www.zefix.ch/de/search/shab/welcome",
             "referrerPolicy": "no-referrer-when-downgrade",
             "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"legalSeats\":[1306,1300,1308,1319,1316,1303,1314,1315,1313,1318,1302,1288,1299,1297,1294,1311,1286,1305,1301,1310,1309,1289,1317,1300,1300,1295,31,26,27,24,22,32,37,19,3050,1977,2908,1974,1835],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
-            //            "body": "{\"publicationDate\":\"" + dateFromISO + "\",\"publicationDateEnd\":\"" + dateToISO + "\",\"legalForms\":[" + legalForm + "],\"registryOffices\":[290],\"maxEntries\":60,\"mutationTypes\":[2],\"offset\":0}",
             "method": "POST",
             "mode": "cors"
         }).then(res => res.json())
@@ -515,9 +516,11 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 console.log(type + ": " + json.error.suggestion);
             }
 
-
-            
-            res.json(data);
+            let returnData = "";
+            for (let entry of data){
+                returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\n";
+            }
+            res.send(returnData);
 
         }).catch(error => {
             res.send("starthub backend error");
