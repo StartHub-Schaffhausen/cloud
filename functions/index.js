@@ -223,7 +223,7 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
             }); //fetch Ende
     });
 
-app.get('openid-configuration', (req, res)=>{
+app.get('/openid-configuration', (req, res)=>{
 
     fetch('https://eid.sh.ch/.well-known/openid-configuration',{
         "headers": {
@@ -233,7 +233,7 @@ app.get('openid-configuration', (req, res)=>{
         "method": "GET",
         "mode": "cors"
     }).then(resp=> resp.json()).then(json=>{
-        res.json(json);
+        return res.json(json);
     });
 
 });
