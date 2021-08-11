@@ -235,8 +235,22 @@ app.get('/oidc/.well-known/openid-configuration', (req, res)=>{
     }).then(resp=> resp.json()).then(json=>{
         return res.json(json);
     });
-
 });
+
+app.get('/oidc', (req, res)=>{
+
+    fetch('https://eid.sh.ch/.well-known/openid-configuration',{
+        "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json;charset=UTF-8",
+        },
+        "method": "GET",
+        "mode": "cors"
+    }).then(resp=> resp.json()).then(json=>{
+        return res.json(json);
+    });
+});
+
 
 app.get('/testmail', async (req, res) => {
 
