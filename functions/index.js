@@ -223,7 +223,7 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
             }); //fetch Ende
     });
 
-app.get('/openid-configuration', (req, res)=>{
+app.get('/openid-configuration/.well-known/openid-configuration', (req, res)=>{
 
     fetch('https://eid.sh.ch/.well-known/openid-configuration',{
         "headers": {
