@@ -529,7 +529,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 const fields = ['organisation', 'careOf', 'street','houseNumber','swissZipCode', 'town'];
                 const opts = { fields };
                 const csv = parse(csvFileArray);
-                console.log(csv);
+                //console.log(csv);
               } catch (err) {
                 console.error(err);
               }
