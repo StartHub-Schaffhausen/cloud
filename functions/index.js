@@ -518,12 +518,12 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
 
             let returnData = "";
             for (let entry of data){
-                returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
+                returnData = returnData + entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
             }
 
-            res.set('Content-Type', 'text/csv; charset=utf-8');
+            res.set('Content-Type', 'text/csv;charset=utf-8');
             res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
-            res.status(200).send(returnData);
+            res.status(200).send("data:text/csv;charset=utf-8,%EF%BB%BF" + returnData);
 
 
         }).catch(error => {
