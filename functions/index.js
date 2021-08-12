@@ -521,7 +521,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
             }
 
-            res.set('Content-Type', 'application/octet-stream');
+            res.set('Content-Type', 'text/csv');
             res.attachment('starthub.csv');
             res.status(200).send(returnData);
 
