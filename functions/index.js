@@ -520,7 +520,11 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
             for (let entry of data){
                 returnData = returnData + entry.address.organisation + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
             }
-            res.send(returnData);
+
+            res.set('Content-Type', 'application/octet-stream');
+            res.attachment('starthub.csv');
+            res.status(200).send(returnData);
+
 
         }).catch(error => {
             res.send("starthub backend error");
