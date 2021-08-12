@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+const { parse  } = require('json2csv');
 
 functions.region('europe-west6');
 // // Create and Deploy Your First Cloud Functions
@@ -516,14 +517,24 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 console.log(type + ": " + json.error.suggestion);
             }
 
-            let returnData = "";
+            let lineItem = "";
+            let csvFileArray = [];
             for (let entry of data){
-                returnData = returnData + entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
+                lineItem = entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
+                console.log(lineItem);
+                csvFileArray.push(lineItem);
             }
+
+            try {
+                const csv = parse(csvFileArray);
+                console.log(csv);
+              } catch (err) {
+                console.error(err);
+              }
 
             res.set('Content-Type', 'text/csv;charset=utf-8');
             res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
-            res.status(200).send(returnData);//"data:text/csv;charset=utf-8,%EF%BB%BF" + 
+            res.status(200).send(csv);//"data:text/csv;charset=utf-8,%EF%BB%BF" + 
 
 
         }).catch(error => {
