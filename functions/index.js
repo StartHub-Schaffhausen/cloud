@@ -522,7 +522,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
             }
 
             res.set('Content-Type', 'text/csv');
-            res.attachment('starthub.csv');
+            res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
             res.status(200).send(returnData);
 
 
