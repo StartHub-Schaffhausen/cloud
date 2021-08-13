@@ -521,7 +521,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
             let csvFileArray = [];
             for (let entry of data){
                 lineItem = entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town  + "\r\n";
-                console.log(lineItem);
+                //console.log(lineItem);
                 csvFileArray.push(lineItem);
             }
 
@@ -537,6 +537,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
 
               } catch (err) {
                 console.error(err);
+                res.send("error");
               }
 
           
