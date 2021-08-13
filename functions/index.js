@@ -530,13 +530,16 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 const opts = { fields };
                 const csv = parse(csvFileArray, opts);
                 //console.log(csv);
+
+                res.set('Content-Type', 'text/csv;charset=utf-8');
+                res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
+                res.status(200).send(csv);//"data:text/csv;charset=utf-8,%EF%BB%BF" + 
+
               } catch (err) {
                 console.error(err);
               }
 
-            res.set('Content-Type', 'text/csv;charset=utf-8');
-            res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
-            res.status(200).send(csv);//"data:text/csv;charset=utf-8,%EF%BB%BF" + 
+          
 
 
         }).catch(error => {
