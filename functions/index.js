@@ -541,7 +541,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 const opts = {
                     fields,
                     excelStrings: true,
-                    withBOM: true
+                    //withBOM: true
                 };
                 const csv = parse(csvFileArray, opts);
                 //console.log(csv);
