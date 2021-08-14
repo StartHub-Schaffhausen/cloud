@@ -1,5 +1,7 @@
 const functions = require('firebase-functions');
-const { parse  } = require('json2csv');
+const {
+    parse
+} = require('json2csv');
 
 functions.region('europe-west6');
 // // Create and Deploy Your First Cloud Functions
@@ -224,30 +226,30 @@ exports.scheduleMondayEmail = functions.region("europe-west6").pubsub.schedule('
             }); //fetch Ende
     });
 
-app.get('/oidc/.well-known/openid-configuration', (req, res)=>{
+app.get('/oidc/.well-known/openid-configuration', (req, res) => {
 
-    fetch('https://eid.sh.ch/.well-known/openid-configuration',{
+    fetch('https://eid.sh.ch/.well-known/openid-configuration', {
         "headers": {
             "accept": "application/json, text/plain, */*",
             "content-type": "application/json;charset=UTF-8",
         },
         "method": "GET",
         "mode": "cors"
-    }).then(resp=> resp.json()).then(json=>{
+    }).then(resp => resp.json()).then(json => {
         return res.json(json);
     });
 });
 
-app.get('/oidc', (req, res)=>{
+app.get('/oidc', (req, res) => {
 
-    fetch('https://eid.sh.ch/.well-known/openid-configuration',{
+    fetch('https://eid.sh.ch/.well-known/openid-configuration', {
         "headers": {
             "accept": "application/json, text/plain, */*",
             "content-type": "application/json;charset=UTF-8",
         },
         "method": "GET",
         "mode": "cors"
-    }).then(resp=> resp.json()).then(json=>{
+    }).then(resp => resp.json()).then(json => {
         return res.json(json);
     });
 });
@@ -519,37 +521,41 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
 
             let lineItem = "";
             let csvFileArray = [];
-            for (let entry of data){
+            for (let entry of data) {
                 lineItem = {
-                    "organisation" : entry.address.organisation,
+                    "organisation": entry.address.organisation,
                     "careOf": entry.address.careOf,
                     "street": entry.address.street,
                     "houseNumber": entry.address.houseNumber,
                     "swissZipCode": entry.address.swissZipCode,
                     "town": entry.address.town
                 };
-        
+
                 //entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town ; //+ "\r\n";
                 //console.log(lineItem);
                 csvFileArray.push(lineItem);
             }
 
             try {
-                const fields = ['organisation', 'careOf', 'street','houseNumber','swissZipCode', 'town'];
-                const opts = { fields };
+                const fields = ['organisation', 'careOf', 'street', 'houseNumber', 'swissZipCode', 'town'];
+                const opts = {
+                    fields,
+                    excelStrings: true,
+                    withBOM: true
+                };
                 const csv = parse(csvFileArray, opts);
                 //console.log(csv);
 
                 res.set('Content-Type', 'text/csv;charset=utf-8');
                 res.attachment('starthub_adressen_' + dateFrom + '-' + dateTo + '.csv');
-                res.status(200).send(csv);//"data:text/csv;charset=utf-8,%EF%BB%BF" + 
+                res.status(200).send(csv); //"data:text/csv;charset=utf-8,%EF%BB%BF" + 
 
-              } catch (err) {
+            } catch (err) {
                 console.error(err);
                 res.send("error");
-              }
+            }
 
-          
+
 
 
         }).catch(error => {
@@ -669,7 +675,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         if (req.body.type == 'invoice.created') {
 
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
-            try{
+            try {
                 db.collection('mail').add({
                     to: invoiceData.email,
                     template: {
@@ -681,15 +687,15 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                             endeDatum: reservation.data().dateTo.toISOString().substring(8, 10) + "." + reservation.data().dateTo.toISOString().substring(5, 7) + "." + reservation.data().dateTo.toISOString().substring(0, 4),
                             endeUhrzeit: reservation.data().dateTo.toISOString().substring(11, 16),
                             stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
-    
+
                         },
                     },
                 })
-            }catch(e){
+            } catch (e) {
                 console.log(e);
             }
-           
-          
+
+
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
 
@@ -826,7 +832,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         userReservationData.price = 19;
     } else if (userReservationData.bookingType == "Week") {
         userReservationData.price = 85;
-    } else  { //month
+    } else { //month
         userReservationData.price = 320;
     }
 
