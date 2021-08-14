@@ -540,8 +540,8 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                 const fields = ['organisation', 'careOf', 'street', 'houseNumber', 'swissZipCode', 'town'];
                 const opts = {
                     fields,
-                    excelStrings: true,
-                    //withBOM: true
+                    //excelStrings: true,
+                    withBOM: true
                 };
                 const csv = parse(csvFileArray, opts);
                 //console.log(csv);
