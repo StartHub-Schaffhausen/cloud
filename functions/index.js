@@ -582,8 +582,9 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 exports.createUserProfile = functions.region("europe-west6").auth.user().onCreate((user) => {
 
     const email = user.email; // The email of the user.
+    console.log("New User with E-Mail: " + email);
 
-    if (email.search('@starthub.sh')) {
+    if (email.search('@starthub.sh') !== -1) {
         admin.auth().setCustomUserClaims(user.uid, {
             admin: true,
             isStartHub: true,
@@ -595,7 +596,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isStartHub: true,
             isBock: false
         });
-    } else if (email.search('@bockonline.ch')) {
+    } else if (email.search('@bockonline.ch') !== -1  ) {
         admin.auth().setCustomUserClaims(user.uid, {
             admin: false,
             isStartHub: false,
