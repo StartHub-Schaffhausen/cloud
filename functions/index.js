@@ -672,8 +672,10 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const reservationId = invoiceData.reservationId; //only one!
 
         const pdf = req.body.data.object.invoice_pdf || "";
+
         const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
-        
+        console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
+
         if (req.body.type == 'invoice.created') {
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
             try {
@@ -699,9 +701,6 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
 
-            
-            console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
-
             await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
@@ -709,6 +708,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 stripeInvoiceId: stripeInvoiceId,
                 stripeInvoiceUrl: invoiceData.stripeInvoiceUrl,
                 stripeInvoiceRecord: invoiceData.stripeInvoiceRecord
+
+                //RESERVATION SACHEN SIND SCHON HIER
             }, {
                 merge: true
             });
@@ -717,6 +718,9 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             await db.collection('invoices').doc(reservationId).set({
                 statusPaid: req.body.data.object.paid,
                 pdf: pdf,
+
+                //STRIPE SACHEN SIND SCHON HIER
+
                 reservationFrom: reservation.data().dateFrom,
                 reservationTo: reservation.data().dateTo,
                 reservationDeskId: reservation.data().desk.id,
