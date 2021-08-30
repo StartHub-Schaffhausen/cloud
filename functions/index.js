@@ -672,7 +672,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const reservationId = invoiceData.reservationId; //only one!
 
         const pdf = req.body.data.object.invoice_pdf || "";
-
+        const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+        
         if (req.body.type == 'invoice.created') {
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
             try {
@@ -698,7 +699,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
 
-            const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+            
             console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
 
             await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
@@ -804,7 +805,7 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     }
 
     // TODO --> STRIPE API aufrufen und Rechnung gutschreiben.
-
+    // SEND MAIL AN SANDRO für MANUELLE VERARBEITUNG?
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
         canceled: true
     }, {
