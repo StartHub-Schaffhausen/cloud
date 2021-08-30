@@ -674,10 +674,9 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const pdf = req.body.data.object.invoice_pdf || "";
 
         if (req.body.type == 'invoice.created') {
-
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
             try {
-                db.collection('mail').add({
+              await db.collection('mail').add({
                     to: invoiceData.email,
                     template: {
                         name: 'MeetinPointReservation',
@@ -688,12 +687,11 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                             endeDatum: reservation.data().dateTo.toISOString().substring(8, 10) + "." + reservation.data().dateTo.toISOString().substring(5, 7) + "." + reservation.data().dateTo.toISOString().substring(0, 4),
                             endeUhrzeit: reservation.data().dateTo.toISOString().substring(11, 16),
                             stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
-
                         },
                     },
                 })
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
 
 
@@ -731,8 +729,13 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         } else if (req.body.type == 'invoice.paid') {
 
+            //TODO Check this...
             //Add Reservation to DESK
-            const deskReservation = await db.collection('desks').doc(userReservationData.desk.id).collection('reservation').doc(reservationId).set(reservation.data());
+            /*const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+            const deskReservation = await db.collection('desks').doc(reservation.data().desk.id).collection('reservations').doc(reservationId).set(
+            reservation.data(), {
+                merge: true
+            });*/
 
             //update user invoice
             await db.collection('users').doc(userId).collection('reservations').doc(reservationId).set({
@@ -747,8 +750,6 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             }, {
                 merge: true
             });
-
-
 
         }
     }
