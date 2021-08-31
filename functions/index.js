@@ -837,6 +837,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     let userReservationData = snapshot.data().reservation;
     userReservationData.id = snapshot.id;
 
+    let metadata = snapshot.data().meta;
+
     const userData = await db.collection('users').doc(userId).get();
 
     if (userReservationData.bookingType == "Morning") {
@@ -860,8 +862,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             currency: "chf",
             quantity: 1, // Optional, defaults to 1.
             description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
-                '. Beginn: ' + userReservationData.dateFromStringDate + " " + userReservationData.dateFromStringTime +
-                ' Ende: ' + userReservationData.dateToStringDate + " " + userReservationData.dateToStringTime
+                '. Beginn: ' + metadata.dateFromStringDate + " " + metadata.dateFromStringTime +
+                ' Ende: ' + metadata.dateToStringDate + " " + metadata.dateToStringTime
         }],
         reservationId: reservationId,
         canceled: false,
