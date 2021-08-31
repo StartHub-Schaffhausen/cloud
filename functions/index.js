@@ -781,8 +781,8 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     console.log(">>> Delete Reservation: " + JSON.stringify(reservation));
 
     //Format Date
-    reservation.dateFrom = new Date(snapshot.data().dateFrom._seconds * 1000);
-    reservation.dateTo = new Date(snapshot.data().dateTo._seconds * 1000);
+    reservation.dateFrom = new Date(reservation.dateFrom._seconds * 1000);
+    reservation.dateTo = new Date(reservation.dateTo._seconds * 1000);
 
     console.log(reservation.dateFrom);
     console.log(reservation.dateTo);
