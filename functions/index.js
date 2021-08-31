@@ -673,7 +673,9 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         const pdf = req.body.data.object.invoice_pdf || "";
 
-        const reservation = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+        const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get().data;
+        const reservation = reservationRef.data().reservation;
+        const meta = reservationRef.data().meta;
         console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
 
         if (req.body.type == 'invoice.created') {
@@ -684,15 +686,15 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                     template: {
                         name: 'MeetinPointReservation',
                         data: {
-                            tisch: reservation.data().desk.name,
-                            firstName: reservation.data().firstName,
-                            startDatum: reservation.data().dateFromStringDate,
+                            tisch: reservation.desk.name,
+                            firstName: meta.firstName,
+                            startDatum: meta.dateFromStringDate,
                             //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            startUhrzeit: reservation.data().dateFromStringTime,
+                            startUhrzeit: meta.dateFromStringTime,
                             //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
-                            endeDatum:  reservation.data().dateToStringDate,
+                            endeDatum:  meta.dateToStringDate,
                             //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            endeUhrzeit:  reservation.data().dateToStringTime,
+                            endeUhrzeit:  meta.dateToStringTime,
                             //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
                             stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
                         },
@@ -726,12 +728,12 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
                 //STRIPE SACHEN SIND SCHON HIER
 
-                reservationFrom: reservation.data().dateFrom,
-                reservationTo: reservation.data().dateTo,
-                reservationDeskId: reservation.data().desk.id,
-                reservationDeskName: reservation.data().desk.name,
-                reservationDeskDescription: reservation.data().desk.description,
-                reservationTypeDescription: reservation.data().bookingTypeDescription,
+                reservationFrom: reservation.dateFrom,
+                reservationTo: reservation.dateTo,
+                reservationDeskId: reservation.desk.id,
+                reservationDeskName: reservation.desk.name,
+                reservationDeskDescription: reservation.desk.description,
+                reservationTypeDescription: reservation.bookingTypeDescription,
 
             }, {
                 merge: true
@@ -774,7 +776,7 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
 
-    let reservation = snapshot.data();
+    let reservation = snapshot.data().reservation;
     console.log(">>> Delete Reservation: " + JSON.stringify(reservation));
 
     //Format Date
