@@ -676,7 +676,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
         const reservation = reservationRef.data().reservation;
         const meta = reservationRef.data().meta;
-        console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
+        console.log(">>> Reservation DATA" + JSON.stringify(reservation));
+        console.log(">>> Meta DATA" + JSON.stringify(meta));
 
         if (req.body.type == 'invoice.created') {
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
