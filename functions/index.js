@@ -685,6 +685,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                         name: 'MeetinPointReservation',
                         data: {
                             tisch: reservation.data().desk.name,
+                            firstName: reservation.data().firstName,
                             startDatum: new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
                             startUhrzeit: new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
                             endeDatum: new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
