@@ -685,7 +685,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
             const userData = userRef.data();
             await db.collection('community').doc(reservationId).set({
                 meta,
-                bio: userData.bio
+                bio: userData.bio,
+                profilePicture: userData.profilePicture
             });
 
             //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
