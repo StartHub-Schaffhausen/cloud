@@ -673,7 +673,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         const pdf = req.body.data.object.invoice_pdf || "";
 
-        const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get().data;
+        const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
         const reservation = reservationRef.data().reservation;
         const meta = reservationRef.data().meta;
         console.log(">>> Reservation DATA" + JSON.stringify(reservation.data()));
