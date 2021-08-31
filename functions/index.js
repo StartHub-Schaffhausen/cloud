@@ -686,10 +686,14 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                         data: {
                             tisch: reservation.data().desk.name,
                             firstName: reservation.data().firstName,
-                            startDatum: new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            startUhrzeit: new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
-                            endeDatum: new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            endeUhrzeit: new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
+                            startDatum: reservation.data().dateFromStringDate,
+                            //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                            startUhrzeit: reservation.data().dateFromStringTime,
+                            //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
+                            endeDatum:  reservation.data().dateToStringDate,
+                            //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                            endeUhrzeit:  reservation.data().dateToStringTime,
+                            //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
                             stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
                         },
                     },
