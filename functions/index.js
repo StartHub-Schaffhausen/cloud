@@ -831,7 +831,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
 
-    let userReservationData = snapshot.data();
+    let userReservationData = snapshot.data().reservation;
     userReservationData.id = snapshot.id;
 
     const userData = await db.collection('users').doc(userId).get();
@@ -856,9 +856,9 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             amount: userReservationData.price * 100, //rappen
             currency: "chf",
             quantity: 1, // Optional, defaults to 1.
-            description: 'Meetingpoint Reservation "' + userReservationData.reservation.desk.name + '": ' + userReservationData.reservation.bookingTypeDescription +
-                '. Beginn: ' + userReservationData.reservation.dateFromStringDate + " " + userReservationData.reservation.dateFromStringTime +
-                ' Ende: ' + userReservationData.reservation.dateToStringDate + " " + userReservationData.reservation.dateToStringTime
+            description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
+                '. Beginn: ' + userReservationData.dateFromStringDate + " " + userReservationData.dateFromStringTime +
+                ' Ende: ' + userReservationData.dateToStringDate + " " + userReservationData.dateToStringTime
         }],
         reservationId: reservationId,
         canceled: false,
@@ -869,24 +869,24 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
 
     });
 
-    const dateFrom = new Date(userReservationData.reservation.dateFrom._seconds * 1000);
-    const dateTo = new Date(userReservationData.reservation.dateTo._seconds * 1000);
+    const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
+    const dateTo = new Date(userReservationData.dateTo._seconds * 1000);
 
     for (var d = dateFrom; d <= dateTo; d = new Date(d.getTime() + (1000 * 60 * 60 * 24))) {
 
         //get current Date
-        let dayRef = await db.collection('desks').doc(userReservationData.reservation.desk.id)
+        let dayRef = await db.collection('desks').doc(userReservationData.desk.id)
             .collection('reservations')
             .doc(new Date(d).toISOString().substr(0, 10)).get();
 
         let dataObject = dayRef.data() || {};
 
-        dataObject[userReservationData.reservation.bookingType] = reservationId;
+        dataObject[userReservationData.bookingType] = reservationId;
 
-        if (userReservationData.reservation.bookingType === 'Morning') { //Falls Morgen gebucht, Tagesbuchung nicht möglich
+        if (userReservationData.bookingType === 'Morning') { //Falls Morgen gebucht, Tagesbuchung nicht möglich
             dataObject['Day'] = reservationId;
 
-        } else if (userReservationData.reservation.bookingType === 'Afternoon') { //Falls Nachmittag gebucht, Tagesbuchung nicht möglich
+        } else if (userReservationData.bookingType === 'Afternoon') { //Falls Nachmittag gebucht, Tagesbuchung nicht möglich
             dataObject['Day'] = reservationId;
 
         } else {
@@ -894,7 +894,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         }
 
         //set current Date
-        await db.collection('desks').doc(userReservationData.reservation.desk.id)
+        await db.collection('desks').doc(userReservationData.desk.id)
             .collection('reservations')
             .doc(new Date(d).toISOString().substr(0, 10)).set(dataObject);
     }
