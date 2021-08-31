@@ -683,6 +683,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
             const userRef = await db.collection('users').doc(userId).get();
             const userData = userRef.data();
+            console.log("Create Community");
             await db.collection('community').doc(reservationId).set({
                 meta,
                 bio: userData.bio,
