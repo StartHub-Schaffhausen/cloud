@@ -754,7 +754,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
 exports.deleteReservation = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onDelete(async (snapshot, context) => {
     //CLEAN UP RESERVATION / INVOICES
-    console.log("CLEAN UP/DELETE INVOICES & RESERVATIONS");
+    console.log(">>> CLEAN UP/DELETE INVOICES & RESERVATIONS");
 
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
@@ -806,8 +806,8 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
         canceled: true
     }, {
         merge: true
-    })
-
+    });
+    await db.collection('invoices').doc(reservationId).delete();
 
     return true;
 });
@@ -853,9 +853,6 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
   } catch (e) {
       console.error(e);
   }
-
-
-
 
 /// ADD COMMUNITY FEED
     const userRef = await db.collection('users').doc(userId).get();
