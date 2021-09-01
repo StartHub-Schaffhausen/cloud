@@ -866,8 +866,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     console.log("Create Community");
     await db.collection('community').doc(reservationId).set({
         metadata,
-        bio: userData.data().bio,
-        profilePicture: userData.data().profilePicture
+        bio: userData.data().bio || "",
+        profilePicture: userData.data().profilePicture || ""
     });
 
     //Create Invoice
