@@ -594,7 +594,9 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             email: email,
             admin: true,
             isStartHub: true,
-            isBock: false
+            isBock: false,
+            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            bio: "Noch keine Bio vorhanden"
         });
     } else if (email.search('@bockonline.ch') !== -1  ) {
         admin.auth().setCustomUserClaims(user.uid, {
@@ -607,14 +609,18 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             email: email,
             admin: true,
             isStartHub: true,
-            isBock: false
+            isBock: false,
+            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            bio: "Noch keine Bio vorhanden"
         });
     } else {
         return db.collection('users').doc(user.uid).set({
             email: email,
             admin: false,
             isStartHub: false,
-            isBock: false
+            isBock: false,
+            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            bio: "Noch keine Bio vorhanden"
         });
         //TODO: Send Welcome Mail with Instructions to the tool
 
