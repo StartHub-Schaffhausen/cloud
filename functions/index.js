@@ -658,16 +658,15 @@ exports.verifyEmail = functions.region("europe-west6").auth.user().onCreate((use
 
 
 exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRequest(async (req, resp) => {
-
     //TRIGGER FIRESTORE FROM STRIPE: 
 
-    console.log(">>> UPDATE MODE: " + req.body.type);
+    console.log(">>> WEBHOOK MODE: " + req.body.type);
     //console.log(">>> stripeInvoiceId: " + req.body.data.object.id);
     //console.log(">>> DATA: " + JSON.stringify(req.body));
 
-    const stripeInvoiceId = req.body.data.object.id;
-
+    const stripeInvoiceId = req.body.data.object.id; // wird über firebase function gesetzt.. anschliessend mit webhook (=hier gelesen)
     const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', stripeInvoiceId).get();
+
     if (invoiceList.empty) {
         console.log(">>> NO Invoice found");
     } else {
@@ -921,10 +920,11 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         }
 
         //set current Date
-        await db.collection('desks').doc(userReservationData.desk.id)
+       await db.collection('desks').doc(userReservationData.desk.id)
             .collection('reservations')
             .doc(new Date(d).toISOString().substr(0, 10)).set(dataObject);
     }
+    console.log(">>> Invoice on firebase created");
 
 });
 
