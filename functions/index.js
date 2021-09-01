@@ -814,7 +814,7 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
 
 exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onCreate(async (snapshot, context) => {
 
-    //CREATE GLOBAL INVOICE FROM RESERVATION TO TRIGGER EXTENSION
+    //CREATE GLOBAL INVOICE FROM RESERVATION in APP TO TRIGGER EXTENSION
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
 
@@ -822,21 +822,12 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     userReservationData.id = snapshot.id;
 
     let metadata = snapshot.data().meta;
+    console.log(">>> Invoice on user Profile created with data: ");
+    console.log(JSON.stringify(userReservationData));
+    console.log(JSON.stringify(metadata));
 
+    //GET USERDATA
     const userData = await db.collection('users').doc(userId).get();
-
-    if (userReservationData.bookingType == "Morning") {
-        userReservationData.price = 12;
-    } else if (userReservationData.bookingType == "Afternoon") {
-        userReservationData.price = 12;
-    } else if (userReservationData.bookingType == "Day") {
-        userReservationData.price = 19;
-    } else if (userReservationData.bookingType == "Week") {
-        userReservationData.price = 85;
-    } else { //month
-        userReservationData.price = 320;
-    }
-
 
   //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
   try {
@@ -866,7 +857,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
 
 
 
-/// COMMUNITY
+/// ADD COMMUNITY FEED
     const userRef = await db.collection('users').doc(userId).get();
     console.log("Create Community");
     await db.collection('community').doc(reservationId).set({
@@ -875,7 +866,20 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         profilePicture: userData.data().profilePicture || "https://via.placeholder.com/150/7d94ff"
     });
 
-    //Create Invoice
+    //Create Invoice 
+    if (userReservationData.bookingType == "Morning") {
+        userReservationData.price = 12;
+    } else if (userReservationData.bookingType == "Afternoon") {
+        userReservationData.price = 12;
+    } else if (userReservationData.bookingType == "Day") {
+        userReservationData.price = 19;
+    } else if (userReservationData.bookingType == "Week") {
+        userReservationData.price = 85;
+    } else { //month
+        userReservationData.price = 320;
+    }
+
+    //SAVE TO 
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
         email: userData.data().email,
         daysUntilDue: 0,
