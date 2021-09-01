@@ -668,21 +668,21 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
     const invoiceList = await db.collection('invoices').where('stripeInvoiceId', '==', stripeInvoiceId).get();
 
     if (invoiceList.empty) {
-        console.log(">>> NO Invoice found");
+        console.log(">>> NO Invoice found with stripeInvoiceId: " + stripeInvoiceId);
     } else {
-        console.log(">>> Invoice found");
+        console.log(">>> Invoice found: " + stripeInvoiceId);
 
         const invoiceData = invoiceList.docs[0].data();
         const userId = invoiceData.userId; //only one!
         const reservationId = invoiceData.reservationId; //only one!
-
         const pdf = req.body.data.object.invoice_pdf || "";
 
         const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
-
         console.log(">>> RESERVATION DATA: " + JSON.stringify(reservationRef.data()));
+
         const reservation = reservationRef.data().reservation;
         console.log(">>> Reservation DATA" + JSON.stringify(reservation));
+
         const meta = reservationRef.data().meta;
         console.log(">>> Meta DATA" + JSON.stringify(meta));
 
