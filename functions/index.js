@@ -662,8 +662,8 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
     //TRIGGER FIRESTORE FROM STRIPE: 
 
     console.log(">>> UPDATE MODE: " + req.body.type);
-    console.log(">>> stripeInvoiceId: " + req.body.data.object.id);
-    console.log(">>> DATA: " + JSON.stringify(req.body));
+    //console.log(">>> stripeInvoiceId: " + req.body.data.object.id);
+    //console.log(">>> DATA: " + JSON.stringify(req.body));
 
     const stripeInvoiceId = req.body.data.object.id;
 
@@ -680,14 +680,14 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const pdf = req.body.data.object.invoice_pdf || "";
 
         const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
+
+        console.log(">>> RESERVATION DATA: " + JSON.stringify(reservationRef.data()));
         const reservation = reservationRef.data().reservation;
-        const meta = reservationRef.data().meta;
         console.log(">>> Reservation DATA" + JSON.stringify(reservation));
+        const meta = reservationRef.data().meta;
         console.log(">>> Meta DATA" + JSON.stringify(meta));
 
         if (req.body.type == 'invoice.created') {
-
-          
 
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
