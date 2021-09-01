@@ -681,40 +681,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
 
         if (req.body.type == 'invoice.created') {
 
-            const userRef = await db.collection('users').doc(userId).get();
-            const userData = userRef.data();
-            console.log("Create Community");
-            await db.collection('community').doc(reservationId).set({
-                meta,
-                bio: userData.bio,
-                profilePicture: userData.profilePicture
-            });
-
-            //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
-            try {
-              await db.collection('mail').add({
-                    to: invoiceData.email,
-                    template: {
-                        name: 'MeetinPointReservation',
-                        data: {
-                            tisch: reservation.desk.name,
-                            firstName: meta.firstName,
-                            startDatum: meta.dateFromStringDate,
-                            //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            startUhrzeit: meta.dateFromStringTime,
-                            //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
-                            endeDatum:  meta.dateToStringDate,
-                            //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                            endeUhrzeit:  meta.dateToStringTime,
-                            //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
-                            stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
-                        },
-                    },
-                })
-            } catch (e) {
-                console.error(e);
-            }
-
+          
 
         } else if (req.body.type == 'invoice.updated') {
             //update user invoice
@@ -826,7 +793,6 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
         }
     }
 
-
     await db.collection('community').doc(reservationId).delete();
 
     // TODO --> STRIPE API aufrufen und Rechnung gutschreiben.
@@ -866,6 +832,44 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         userReservationData.price = 320;
     }
 
+
+  //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
+  try {
+    await db.collection('mail').add({
+          to: userData.data().email,
+          template: {
+              name: 'MeetinPointReservation',
+              data: {
+                  tisch: userReservationData.desk.name,
+                  firstName: metadata.firstName,
+                  startDatum: metadata.dateFromStringDate,
+                  //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                  startUhrzeit: metadata.dateFromStringTime,
+                  //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
+                  endeDatum:  metadata.dateToStringDate,
+                  //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                  endeUhrzeit:  metadata.dateToStringTime,
+                  //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
+                  //stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
+              },
+          },
+      })
+  } catch (e) {
+      console.error(e);
+  }
+
+
+
+
+/// COMMUNITY
+    const userRef = await db.collection('users').doc(userId).get();
+    console.log("Create Community");
+    await db.collection('community').doc(reservationId).set({
+        metadata,
+        bio: userData.data().bio,
+        profilePicture: userData.data().profilePicture
+    });
+
     //Create Invoice
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
         email: userData.data().email,
@@ -884,7 +888,6 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         firstName: userData.data().firstName || "Kein Vorname",
         lastName: userData.data().lastName || "Kein Nachname",
         profilePicture: userData.data().profilePicture || "Kein Bild",
-
     });
 
     const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
