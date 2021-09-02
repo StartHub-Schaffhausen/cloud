@@ -595,7 +595,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             admin: true,
             isStartHub: true,
             isBock: false,
-            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
         });
     } else if (email.search('@bockonline.ch') !== -1  ) {
@@ -610,7 +610,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             admin: true,
             isStartHub: true,
             isBock: false,
-            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
         });
     } else {
@@ -678,13 +678,13 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
         const pdf = req.body.data.object.invoice_pdf || "";
 
         const reservationRef = await db.collection('users').doc(userId).collection('reservations').doc(reservationId).get();
-        console.log(">>> RESERVATION DATA: " + JSON.stringify(reservationRef.data()));
+        console.log(">>> USER RESERVATION DATA: " + JSON.stringify(reservationRef.data()));
 
         const reservation = reservationRef.data().reservation;
-        console.log(">>> Reservation DATA" + JSON.stringify(reservation));
+        console.log(">>> Reservation Object DATA" + JSON.stringify(reservation));
 
         const meta = reservationRef.data().meta;
-        console.log(">>> Meta DATA" + JSON.stringify(meta));
+        console.log(">>> Meta Object DATA" + JSON.stringify(meta));
 
         if (req.body.type == 'invoice.created') {
 
@@ -860,7 +860,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     await db.collection('community').doc(reservationId).set({
         metadata,
         bio: userData.data().bio || "noch keine Bio vorhanden",
-        profilePicture: userData.data().profilePicture || "https://via.placeholder.com/150/7d94ff"
+        profilePicture: userData.data().profilePicture || "https://via.placeholder.com/600/7d94ff"
     });
 
     //Create Invoice 
