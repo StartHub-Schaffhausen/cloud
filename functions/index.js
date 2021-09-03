@@ -614,6 +614,8 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
+        },{
+            merge: true
         });
     } else {
         return db.collection('users').doc(user.uid).set({
@@ -623,6 +625,8 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/150/7d94ff",
             bio: "Noch keine Bio vorhanden"
+        },{
+            merge: true
         });
         //TODO: Send Welcome Mail with Instructions to the tool
 
