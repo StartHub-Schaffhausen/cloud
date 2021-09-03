@@ -597,6 +597,8 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
+        },{
+            merge: true
         });
     } else if (email.search('@bockonline.ch') !== -1  ) {
         admin.auth().setCustomUserClaims(user.uid, {
