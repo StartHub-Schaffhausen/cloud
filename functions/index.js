@@ -623,7 +623,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             admin: false,
             isStartHub: false,
             isBock: false,
-            profilePicture: "https://via.placeholder.com/150/7d94ff",
+            profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
         },{
             merge: true
