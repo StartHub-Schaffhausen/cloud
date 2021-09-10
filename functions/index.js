@@ -529,7 +529,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
                     "houseNumber": entry.address.houseNumber,
                     "swissZipCode": entry.address.swissZipCode,
                     "town": entry.address.town,
-                    "reason": entry.purpose
+                    "purpose": entry.purpose
                 };
 
                 //entry.address.organisation + ";" + entry.address.careOf + ";" + entry.address.street + ";" + entry.address.houseNumber + ";" + entry.address.swissZipCode + ";" + entry.address.town ; //+ "\r\n";
@@ -538,7 +538,7 @@ app.get('/printStartups/:type/:from/:to', (req, res) => {
             }
 
             try {
-                const fields = ['organisation', 'careOf', 'street', 'houseNumber', 'swissZipCode', 'town'];
+                const fields = ['organisation', 'careOf', 'street', 'houseNumber', 'swissZipCode', 'town', 'purpose'];
                 const opts = {
                     fields,
                     //excelStrings: true,
