@@ -3,6 +3,9 @@ const {
     parse
 } = require('json2csv');
 
+const stripe = require('stripe')('sk_test_51ItfioE6utsimb7AdlVEbhfCn17yp5l0BRuUR2pkOiFckkdmraP84l8qimWff7VCypY7XzuP1w8QUvrXbz9q0I6b00eIVnxFph');
+
+
 functions.region('europe-west6');
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -46,6 +49,7 @@ const FormData = require('form-data');
 const htmlToText = require('html-to-text');
 
 const moment = require('moment');
+const { json } = require('express');
 
 /*
 import {
@@ -243,6 +247,20 @@ app.get('/oidc/.well-known/openid-configuration', (req, res) => {
 app.get('/oidc', (req, res) => {
 
     fetch('https://eid.sh.ch/.well-known/openid-configuration', {
+        "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json;charset=UTF-8",
+        },
+        "method": "GET",
+        "mode": "cors"
+    }).then(resp => resp.json()).then(json => {
+        return res.json(json);
+    });
+});
+
+app.get('/oidc-test', (req, res) => {
+
+    fetch('https://gateway.test.eid.sh.ch/.well-known/openid-configuration', {
         "headers": {
             "accept": "application/json, text/plain, */*",
             "content-type": "application/json;charset=UTF-8",
@@ -809,11 +827,28 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
 
     // TODO --> STRIPE API aufrufen und Rechnung gutschreiben.
     // SEND MAIL AN SANDRO für MANUELLE VERARBEITUNG?
+
+    /*const invoiceRef = await db.collection('invoices').doc(reservationId).get();
+    console.log("payment id from stripe: " + invoiceRef.data().stripeInvoiceId);
+    
+    const invoice = await stripe.invoices.finalizeInvoice(
+        invoiceRef.data().stripeInvoiceId
+      );
+    console.log("finalize invoice in stripe: " + JSON.stringify(invoice));
+
+    const refund = await stripe.refunds.create({
+        charge: invoiceRef.data().payment_intent,
+    });
+    console.log("Stripe Refund: " + JSON.stringify(refund));
+    */
+
+    //Delete Invoice
     const invoiceRef = await db.collection('invoices').doc(reservationId).set({
         canceled: true
     }, {
         merge: true
     });
+
     await db.collection('invoices').doc(reservationId).delete();
 
     return true;
