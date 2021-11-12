@@ -864,32 +864,31 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         profilePicture: userData.data().profilePicture || "https://via.placeholder.com/600/7d94ff"
     });
 
-    console.log(">>> USER IS STUDENT? " +  userData.data().isStudent);
-
+    
     //Create Invoice 
     if (userReservationData.bookingType == "Morning") {
         userReservationData.price = 7;
-        if ( userData.data().isStudent){
+        if (userData.data().isStudent){
             userReservationData.price = 5;
         }
     } else if (userReservationData.bookingType == "Afternoon") {
         userReservationData.price = 7;
-        if ( userData.data().isStudent){
+        if (userData.data().isStudent){
             userReservationData.price = 5;
         }
     } else if (userReservationData.bookingType == "Day") {
         userReservationData.price = 12;
-        if ( userData.data().isStudent){
+        if (userData.data().isStudent){
             userReservationData.price = 10;
         }
     } else if (userReservationData.bookingType == "Week") {
         userReservationData.price = 55;
-        if ( userData.data().isStudent){
+        if (userData.data().isStudent){
             userReservationData.price = 50;
         }
     } else { //month
         userReservationData.price = 250;
-        if ( userData.data().isStudent){
+        if (userData.data().isStudent){
             userReservationData.price = 200;
         }
     }
@@ -901,6 +900,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         console.log(">> IS FREE DAY!!! ")
         userReservationData.price = 0;
     }
+    console.log(">>> USER IS STUDENT? " +  userData.data().isStudent);
+    console.log(">>> PRICE FOR BOOKING IS: " +  userReservationData.price);
 
         const invoiceRef = await db.collection('invoices').doc(reservationId).set({
             email: userData.data().email,
