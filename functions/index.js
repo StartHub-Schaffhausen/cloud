@@ -814,8 +814,8 @@ exports.deleteReservation = functions.region('europe-west6').firestore.document(
 });
 
 exports.createInvoice = functions.region('europe-west6').firestore.document('/users/{userId}/reservations/{reservationId}').onCreate(async (snapshot, context) => {
-
     //CREATE GLOBAL INVOICE FROM RESERVATION in APP TO TRIGGER EXTENSION
+
     const userId = context.params.userId;
     const reservationId = context.params.reservationId;
 
@@ -892,26 +892,33 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         }
     }
 
-    //SAVE TO 
-    const invoiceRef = await db.collection('invoices').doc(reservationId).set({
-        email: userData.data().email,
-        daysUntilDue: 0,
-        items: [{
-            amount: userReservationData.price * 100, //rappen
-            currency: "chf",
-            quantity: 1, // Optional, defaults to 1.
-            description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
-                '. Beginn: ' + metadata.dateFromStringDate + " " + metadata.dateFromStringTime +
-                ' Ende: ' + metadata.dateToStringDate + " " + metadata.dateToStringTime
-        }],
-        reservationId: reservationId,
-        canceled: false,
-        userId: userId,
-        firstName: userData.data().firstName || "Kein Vorname",
-        lastName: userData.data().lastName || "Kein Nachname",
-        profilePicture: userData.data().profilePicture || "Kein Bild",
-    });
+    //SAVE TO STRIPE ONLY ON NOT WEDNESDAY and Day / HALFDAY BOOKING
+    const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
+    if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && dateFrom.getDay() === 3 ){
+        // GRATIS TAG!!!!
+    }else{
+        const invoiceRef = await db.collection('invoices').doc(reservationId).set({
+            email: userData.data().email,
+            daysUntilDue: 0,
+            items: [{
+                amount: userReservationData.price * 100, //rappen
+                currency: "chf",
+                quantity: 1, // Optional, defaults to 1.
+                description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
+                    '. Beginn: ' + metadata.dateFromStringDate + " " + metadata.dateFromStringTime +
+                    ' Ende: ' + metadata.dateToStringDate + " " + metadata.dateToStringTime
+            }],
+            reservationId: reservationId,
+            canceled: false,
+            userId: userId,
+            firstName: userData.data().firstName || "Kein Vorname",
+            lastName: userData.data().lastName || "Kein Nachname",
+            profilePicture: userData.data().profilePicture || "Kein Bild",
+        });
+    }
 
+
+    // BOOK TABLE
     const dateFrom = new Date(userReservationData.dateFrom._seconds * 1000);
     const dateTo = new Date(userReservationData.dateTo._seconds * 1000);
 
