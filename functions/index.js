@@ -893,8 +893,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     }
 
     //SAVE TO STRIPE ONLY ON NOT WEDNESDAY and Day / HALFDAY BOOKING
-    const mittwoch = new Date(userReservationData.dateFrom._seconds * 1000);
-    if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && mittwoch.getDay() === 3 ){
+    const isMittwoch = new Date(userReservationData.dateFrom._seconds * 1000);
+    if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && isMittwoch.getDay() === 3 ){
         // GRATIS TAG!!!!
     }else{
         const invoiceRef = await db.collection('invoices').doc(reservationId).set({
