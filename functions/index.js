@@ -864,6 +864,8 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         profilePicture: userData.data().profilePicture || "https://via.placeholder.com/600/7d94ff"
     });
 
+    console.log("USER IS STUDENT? " +  userData.data().isStudent);
+
     //Create Invoice 
     if (userReservationData.bookingType == "Morning") {
         userReservationData.price = 7;
@@ -898,7 +900,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         // GRATIS TAG!!!!
         userReservationData.price = 0;
     }
-    
+
         const invoiceRef = await db.collection('invoices').doc(reservationId).set({
             email: userData.data().email,
             daysUntilDue: 0,
