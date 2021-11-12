@@ -286,60 +286,6 @@ app.get('/oidc-test/.well-known/openid-configuration', (req, res) => {
     });
 });
 
-app.get('/testmail', async (req, res) => {
-
-    // calculate TimeStamps for request:
-    const now = moment();
-    let date = now.subtract(2, 'weeks'); // 7 months, 7 days and 7 seconds ago
-    let dateNow = new Date();
-
-    console.log("Testmail");
-    console.log("von " + date.toISOString().slice(0, 10));
-    console.log("bis " + dateNow.toISOString().slice(0, 10));
-
-    fetch("https://europe-west6-starthub-schaffhausen.cloudfunctions.net/api/startups/all/" + date.toISOString().slice(0, 10) + "/" + dateNow.toISOString().slice(0, 10), {
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "content-type": "application/json;charset=UTF-8",
-            },
-            "method": "GET",
-            "mode": "cors"
-        }).then(res => res.json())
-        .then(async json => {
-
-            let startupString = "";
-            for (let startup of json) {
-                console.log(startup.name);
-
-                if (startup.address.careOf) {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.careOf + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
-                } else {
-                    startupString = startupString + "<li><b>" + startup.name + "</b> - " + startup.uid + " / " + String(startup.shabDate).substr(8, 2) + "." + String(startup.shabDate).substr(5, 2) + "." + String(startup.shabDate).substr(0, 4) + "</br> (" + startup.address.organisation + ", " + startup.address.street + " " + startup.address.houseNumber + ", " + startup.address.swissZipCode + " " + startup.address.town + ")";
-                }
-                // Add purpose
-                startupString = startupString + "<p>" + startup.purpose + "</p>" + "</br>" + "</li>";
-
-            }
-
-            let partnerRef = await db.collection('partnerprogramm').where('active', '==', true).get();
-            partnerRef.forEach(async partner => {
-
-                let mail = await db.collection('mail').add({
-                    to: partner.data().email,
-                    template: {
-                        name: 'PartnerMonthlyNewsletter',
-                        data: {
-                            firstName: partner.data().firstName,
-                            lastName: partner.data().lastName,
-                            startupString: startupString
-                        },
-                    },
-                })
-            });
-            res.end();
-        }); //fetch Ende
-});
-
 app.get('/startups/:type/:from/:to', (req, res) => {
 
     let type = req.params.type;
@@ -349,7 +295,7 @@ app.get('/startups/:type/:from/:to', (req, res) => {
     console.log("using dates: " + dateFrom + " / " + dateTo);
 
     let dateFromISO = new Date(dateFrom).toISOString().slice(0.10);
-    let dateToISO = new Date(dateTo).toISOString().slice(0.10);
+    let dateToISO = new Date(dateTo).toIOString().slice(0.10);
     console.log("using ISO dates: " + dateFromISO + " / " + dateToISO);
 
     let body = "";
@@ -910,7 +856,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
   }
 
 /// ADD COMMUNITY FEED
-    const userRef = await db.collection('users').doc(userId).get();
+    //const userRef = await db.collection('users').doc(userId).get(); // WIESO HATTE ICH DAS DRIN?
     console.log("Create Community");
     await db.collection('community').doc(reservationId).set({
         metadata,
@@ -920,15 +866,30 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
 
     //Create Invoice 
     if (userReservationData.bookingType == "Morning") {
-        userReservationData.price = 12;
+        userReservationData.price = 7;
+        if ( userData.data().isStudent){
+            userReservationData.price = 5;
+        }
     } else if (userReservationData.bookingType == "Afternoon") {
-        userReservationData.price = 12;
+        userReservationData.price = 7;
+        if ( userData.data().isStudent){
+            userReservationData.price = 5;
+        }
     } else if (userReservationData.bookingType == "Day") {
-        userReservationData.price = 19;
+        userReservationData.price = 12;
+        if ( userData.data().isStudent){
+            userReservationData.price = 10;
+        }
     } else if (userReservationData.bookingType == "Week") {
-        userReservationData.price = 85;
+        userReservationData.price = 55;
+        if ( userData.data().isStudent){
+            userReservationData.price = 50;
+        }
     } else { //month
-        userReservationData.price = 320;
+        userReservationData.price = 250;
+        if ( userData.data().isStudent){
+            userReservationData.price = 200;
+        }
     }
 
     //SAVE TO 
