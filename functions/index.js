@@ -896,7 +896,9 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     const isMittwoch = new Date(userReservationData.dateFrom._seconds * 1000);
     if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && isMittwoch.getDay() === 3 ){
         // GRATIS TAG!!!!
-    }else{
+        userReservationData.price = 0;
+    }
+    
         const invoiceRef = await db.collection('invoices').doc(reservationId).set({
             email: userData.data().email,
             daysUntilDue: 0,
@@ -915,7 +917,6 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             lastName: userData.data().lastName || "Kein Nachname",
             profilePicture: userData.data().profilePicture || "Kein Bild",
         });
-    }
 
 
     // BOOK TABLE
