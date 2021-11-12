@@ -864,7 +864,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
         profilePicture: userData.data().profilePicture || "https://via.placeholder.com/600/7d94ff"
     });
 
-    console.log("USER IS STUDENT? " +  userData.data().isStudent);
+    console.log(">>> USER IS STUDENT? " +  userData.data().isStudent);
 
     //Create Invoice 
     if (userReservationData.bookingType == "Morning") {
@@ -898,6 +898,7 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     const isMittwoch = new Date(userReservationData.dateFrom._seconds * 1000);
     if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && isMittwoch.getDay() === 3 ){
         // GRATIS TAG!!!!
+        console.log(">> IS FREE DAY!!! ")
         userReservationData.price = 0;
     }
 
