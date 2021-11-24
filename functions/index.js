@@ -49,7 +49,9 @@ const FormData = require('form-data');
 const htmlToText = require('html-to-text');
 
 const moment = require('moment');
-const { json } = require('express');
+const {
+    json
+} = require('express');
 
 /*
 import {
@@ -295,7 +297,7 @@ app.get('/startups/:type/:from/:to', (req, res) => {
     console.log("using dates: " + dateFrom + " / " + dateTo);
 
     let dateFromISO = new Date(dateFrom).toISOString().slice(0.10);
-    let dateToISO = new Date(dateTo).toIOString().slice(0.10);
+    let dateToISO = new Date(dateTo).toISOString().slice(0.10);
     console.log("using ISO dates: " + dateFromISO + " / " + dateToISO);
 
     let body = "";
@@ -575,10 +577,10 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
-        },{
+        }, {
             merge: true
         });
-    } else if (email.search('@bockonline.ch') !== -1  ) {
+    } else if (email.search('@bockonline.ch') !== -1) {
         admin.auth().setCustomUserClaims(user.uid, {
             admin: false,
             isStartHub: false,
@@ -592,7 +594,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
-        },{
+        }, {
             merge: true
         });
     } else {
@@ -603,7 +605,7 @@ exports.createUserProfile = functions.region("europe-west6").auth.user().onCreat
             isBock: false,
             profilePicture: "https://via.placeholder.com/600/7d94ff",
             bio: "Noch keine Bio vorhanden"
-        },{
+        }, {
             merge: true
         });
         //TODO: Send Welcome Mail with Instructions to the tool
@@ -694,7 +696,7 @@ exports.updateInvoiceStripeWebHook = functions.region('europe-west6').https.onRe
                 pdf: pdf,
 
                 //STRIPE SACHEN SIND SCHON HIER
-                
+
                 reservationFrom: reservation.dateFrom,
                 reservationTo: reservation.dateTo,
                 reservationDeskId: reservation.desk.id,
@@ -828,99 +830,100 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
     console.log(JSON.stringify(metadata));
 
     //GET USERDATA
-    const userData = await db.collection('users').doc(userId).get();
+    const userRef = await db.collection('users').doc(userId).get();
+    const userData = userRef.data();
 
-  //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
-  try {
-    await db.collection('mail').add({
-          to: userData.data().email,
-          template: {
-              name: 'MeetinPointReservation',
-              data: {
-                  tisch: userReservationData.desk.name,
-                  firstName: metadata.firstName,
-                  startDatum: metadata.dateFromStringDate,
-                  //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                  startUhrzeit: metadata.dateFromStringTime,
-                  //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
-                  endeDatum:  metadata.dateToStringDate,
-                  //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
-                  endeUhrzeit:  metadata.dateToStringTime,
-                  //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
-                  //stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
-              },
-          },
-      })
-  } catch (e) {
-      console.error(e);
-  }
+    //SEND E-MAIL mit RECHNUNG!!!! --> Wird schon von Stripe gemacht, aber wir machen das auch noch mit Starthub Branding
+    try {
+        await db.collection('mail').add({
+            to: userData.email,
+            template: {
+                name: 'MeetinPointReservation',
+                data: {
+                    tisch: userReservationData.desk.name,
+                    firstName: metadata.firstName,
+                    startDatum: metadata.dateFromStringDate,
+                    //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateFrom._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                    startUhrzeit: metadata.dateFromStringTime,
+                    //new Date(reservation.data().dateFrom._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 ) ) ).toISOString().substring(11, 16),
+                    endeDatum: metadata.dateToStringDate,
+                    //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(8, 10) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(5, 7) + "." + new Date(reservation.data().dateTo._seconds * 1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(0, 4),
+                    endeUhrzeit: metadata.dateToStringTime,
+                    //new Date(reservation.data().dateTo._seconds *1000 + ( new Date().getTimezoneOffset() * 60 * 1000 )).toISOString().substring(11, 16),
+                    //stripeInvoiceUrl: invoiceData.stripeInvoiceUrl
+                },
+            },
+        })
+    } catch (e) {
+        console.error(e);
+    }
 
-/// ADD COMMUNITY FEED
+    /// ADD COMMUNITY FEED
     //const userRef = await db.collection('users').doc(userId).get(); // WIESO HATTE ICH DAS DRIN?
     console.log("Create Community");
     await db.collection('community').doc(reservationId).set({
         metadata,
-        bio: userData.data().bio || "noch keine Bio vorhanden",
-        profilePicture: userData.data().profilePicture || "https://via.placeholder.com/600/7d94ff"
+        bio: userData.bio || "noch keine Bio vorhanden",
+        profilePicture: userData.profilePicture || "https://via.placeholder.com/600/7d94ff"
     });
 
-    
+
     //Create Invoice 
     if (userReservationData.bookingType == "Morning") {
         userReservationData.price = 7;
-        if (userData.data().isStudent){
+        if (userData.isStudent) {
             userReservationData.price = 5;
         }
     } else if (userReservationData.bookingType == "Afternoon") {
         userReservationData.price = 7;
-        if (userData.data().isStudent){
+        if (userData.isStudent) {
             userReservationData.price = 5;
         }
     } else if (userReservationData.bookingType == "Day") {
         userReservationData.price = 12;
-        if (userData.data().isStudent){
+        if (userData.isStudent) {
             userReservationData.price = 10;
         }
     } else if (userReservationData.bookingType == "Week") {
         userReservationData.price = 55;
-        if (userData.data().isStudent){
+        if (userData.isStudent) {
             userReservationData.price = 50;
         }
     } else { //month
         userReservationData.price = 250;
-        if (userData.data().isStudent){
+        if (userData.isStudent) {
             userReservationData.price = 200;
         }
     }
 
     //SAVE TO STRIPE ONLY ON NOT WEDNESDAY and Day / HALFDAY BOOKING
     const isMittwoch = new Date(userReservationData.dateFrom._seconds * 1000);
-    if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && isMittwoch.getDay() === 3 ){
+    if ((userReservationData.bookingType == "Morning" || userReservationData.bookingType == "Afternoon" || userReservationData.bookingType == "Day") && isMittwoch.getDay() === 3) {
         // GRATIS TAG!!!!
         console.log(">> IS FREE DAY!!! ")
         userReservationData.price = 0;
     }
-    console.log(">>> USER IS STUDENT? " +  userData.data().isStudent);
-    console.log(">>> PRICE FOR BOOKING IS: " +  userReservationData.price);
+    console.log(">>> USER IS STUDENT? " + userData.isStudent);
+    console.log(">>> PRICE FOR BOOKING IS: " + userReservationData.price);
 
-        const invoiceRef = await db.collection('invoices').doc(reservationId).set({
-            email: userData.data().email,
-            daysUntilDue: 0,
-            items: [{
-                amount: userReservationData.price * 100, //rappen
-                currency: "chf",
-                quantity: 1, // Optional, defaults to 1.
-                description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
-                    '. Beginn: ' + metadata.dateFromStringDate + " " + metadata.dateFromStringTime +
-                    ' Ende: ' + metadata.dateToStringDate + " " + metadata.dateToStringTime
-            }],
-            reservationId: reservationId,
-            canceled: false,
-            userId: userId,
-            firstName: userData.data().firstName || "Kein Vorname",
-            lastName: userData.data().lastName || "Kein Nachname",
-            profilePicture: userData.data().profilePicture || "Kein Bild",
-        });
+    const invoiceRef = await db.collection('invoices').doc(reservationId).set({
+        email: userData.email,
+        daysUntilDue: 0,
+        items: [{
+            amount: userReservationData.price * 100, //rappen
+            currency: "chf",
+            quantity: 1, // Optional, defaults to 1.
+            description: 'Meetingpoint Reservation "' + userReservationData.desk.name + '": ' + userReservationData.bookingTypeDescription +
+                '. Beginn: ' + metadata.dateFromStringDate + " " + metadata.dateFromStringTime +
+                ' Ende: ' + metadata.dateToStringDate + " " + metadata.dateToStringTime
+        }],
+        reservationId: reservationId,
+        canceled: false,
+        userId: userId,
+        firstName: userData.firstName || "Kein Vorname",
+        lastName: userData.lastName || "Kein Nachname",
+        profilePicture: userData.profilePicture || "Kein Bild",
+    });
 
 
     // BOOK TABLE
@@ -948,12 +951,15 @@ exports.createInvoice = functions.region('europe-west6').firestore.document('/us
             dataObject['Day'] = reservationId; //Wird oben schon gesetzt 
         }
 
+        console.log(">>> " + new Date(d).toISOString().substr(0, 10) + " save desk: " + JSON.stringify(dataObject));
+
         //set current Date
-       await db.collection('desks').doc(userReservationData.desk.id)
+        await db.collection('desks').doc(userReservationData.desk.id)
             .collection('reservations')
             .doc(new Date(d).toISOString().substr(0, 10)).set(dataObject);
     }
     console.log(">>> Invoice on firebase created");
+    return true;
 
 });
 
